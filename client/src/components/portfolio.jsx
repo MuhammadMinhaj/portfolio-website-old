@@ -26,7 +26,7 @@ import {
 
 import { withStyles } from '@material-ui/core/styles'
 import VisibilityIcon from '@material-ui/icons/Visibility'
-import { Pagination, Autocomplete } from '@material-ui/lab'
+import { Pagination } from '@material-ui/lab'
 
 // Imported Icons
 import CloseIcon from '@material-ui/icons/Close'
@@ -199,7 +199,7 @@ const Portfolio = () => {
 				<CustomizedDialogs />
 				<Paper variant="outlined" style={{ padding: '1rem' }}>
 					<div className={styled.search}>
-						<Search handleChange={handlePortfolioSearch} suggestLists={items} />
+						<Search handleChange={handlePortfolioSearch} suggestLists={items} width="500px" size="medium" />
 					</div>
 					<ScrollableTabsButtonAuto />
 

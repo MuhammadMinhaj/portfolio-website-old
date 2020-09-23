@@ -21,7 +21,7 @@
 }
 .progress {
 	width: 100%;
-	margin-top: 0.5rem
+	margin-top: 0.5rem;
 }
 @keyframes blink {
 	50% {
@@ -30,7 +30,16 @@
 }
 
 /* --------------------- Styled Of Header Components ---------------------- */
-
+.iconsContainer > a > svg {
+	margin: 0.5rem;
+	font-size: 1.75rem;
+}
+.iconsContainer > a :hover {
+	transform: scale(0.95);
+	cursor: pointer;
+	transition: all 0.5s;
+	color: white;
+}
 .navContainer {
 	padding: 10px 0px 10px 0px;
 	box-shadow: 0pt 1pt 3pt 1pt #00000035;
@@ -40,7 +49,7 @@
 	top: 0px;
 	display: block;
 	width: 100%;
-	z-index: 1000;
+	z-index: 1300;
 	transition: top 0.25s;
 }
 .brand > h2 {

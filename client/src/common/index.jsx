@@ -4,6 +4,11 @@ import styled from './style.module.css'
 import { TextField } from '@material-ui/core'
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
+import FacebookIcon from '@material-ui/icons/Facebook'
+import InstagramIcon from '@material-ui/icons/Instagram'
+import TwitterIcon from '@material-ui/icons/Twitter'
+import GitHubIcon from '@material-ui/icons/GitHub'
+
 export const Title = props => (
 	<h1 className={styled.title}>
 		{props.title} <span>{props.subTitle}</span>
@@ -62,7 +67,7 @@ export class Typer extends React.Component {
 
 const filter = createFilterOptions()
 
-export const Search = ({ suggestLists, handleChange }) => {
+export const Search = ({ suggestLists, handleChange, width, size }) => {
 	const [value, setValue] = React.useState(null)
 	const dispatch = useDispatch()
 	return (
@@ -114,7 +119,7 @@ export const Search = ({ suggestLists, handleChange }) => {
 				return option.title
 			}}
 			renderOption={option => option.title}
-			style={{ width: 500 }}
+			style={{ width }}
 			freeSolo
 			includeInputInList={true}
 			renderInput={params => (
@@ -125,8 +130,21 @@ export const Search = ({ suggestLists, handleChange }) => {
 					variant="outlined"
 					onChange={event => dispatch(handleChange(event.target.value))}
 					onKeyPress={event => dispatch(handleChange(event.target.value))}
+					size={size}
 				/>
 			)}
 		/>
 	)
 }
+const SocialLink = props => <a href={props.href}>{props.icon}</a>
+
+export const SocialIcons = () => (
+	<div className={styled.iconsContainer}>
+		<SocialLink icon={<FacebookIcon style={{ color: '#3578E5' }} />} href="https://www.facebook.com/profile.php?id=100014744408169" />
+
+		<SocialLink icon={<InstagramIcon style={{ color: '#b51a0e' }} />} href="https://instagram.com/" />
+
+		<SocialLink icon={<TwitterIcon style={{ color: '#1da1f2' }} />} href="https://twitter.com/" />
+		<SocialLink icon={<GitHubIcon style={{ color: 'black' }} />} href="https://github.com/muhammad-minhaj" />
+	</div>
+)

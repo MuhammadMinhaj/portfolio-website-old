@@ -6,6 +6,9 @@ import Skills from './components/skills'
 import Contact from './components/contact'
 import Portfolio from './components/portfolio'
 import Services from './components/services'
+import Blogs from './components/blogs/'
+import ContentBlog from './components/blogs/blogContent'
+
 const routes = [
 	{
 		path: '/',
@@ -27,6 +30,15 @@ const routes = [
 		path: '/portfolio',
 		component: Portfolio,
 	},
+	{
+		path: '/blogs/:groupid/:postid',
+		component: ContentBlog,
+	},
+	{
+		path: '/blogs',
+		component: Blogs,
+	},
+
 	{
 		path: '/services',
 		component: Services,

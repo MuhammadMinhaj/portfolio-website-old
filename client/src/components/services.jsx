@@ -1,7 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 // Imported Core Components Of Material UI
-import { Paper } from '@material-ui/core'
+import { Container, Paper, Grow } from '@material-ui/core'
 import Typography from '@material-ui/core/Typography'
 // Imported Lab Components Of Material Ui
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineOppositeContent, TimelineDot } from '@material-ui/lab'
@@ -14,11 +14,6 @@ import AppleIcon from '@material-ui/icons/Apple'
 import ErrorIcon from '@material-ui/icons/Error'
 import SpeedIcon from '@material-ui/icons/Speed'
 import PublicIcon from '@material-ui/icons/Public'
-import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
-import FastfoodIcon from '@material-ui/icons/Fastfood'
-import LaptopMacIcon from '@material-ui/icons/LaptopMac'
-import HotelIcon from '@material-ui/icons/Hotel'
-import RepeatIcon from '@material-ui/icons/Repeat'
 
 // Imported Common Components
 import { Title } from '../common'
@@ -37,13 +32,13 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const ItemOfTimeLine = ({ IconName, iconColor, iconVariant, title, message, Connector, connectorClass }) => {
+const ItemOfTimeLine = ({ stepNumber, IconName, iconColor, iconVariant, title, message, Connector, connectorClass }) => {
 	const classes = useStyles()
 	return (
 		<TimelineItem>
 			<TimelineOppositeContent>
 				<Typography variant="body2" color="textSecondary">
-					9:30 am
+					00.0{stepNumber}
 				</Typography>
 			</TimelineOppositeContent>
 			<TimelineSeparator>
@@ -52,14 +47,16 @@ const ItemOfTimeLine = ({ IconName, iconColor, iconVariant, title, message, Conn
 				</TimelineDot>
 				{Connector ? <Connector className={connectorClass} /> : null}
 			</TimelineSeparator>
-			<TimelineContent>
-				<Paper elevation={3} className={classes.paper}>
-					<Typography variant="h6" component="h1" style={{ textTransform: 'uppercase', fontWeight: 'bold', color: '#607d8b' }}>
-						{title}
-					</Typography>
-					<Typography className={styled.textBlock}>{message}</Typography>
-				</Paper>
-			</TimelineContent>
+			<Grow in>
+				<TimelineContent>
+					<Paper elevation={3} className={classes.paper}>
+						<Typography variant="h6" component="h1" style={{ textTransform: 'uppercase', fontWeight: 'bold', color: '#607d8b' }}>
+							{title}
+						</Typography>
+						<Typography className={styled.textBlock}>{message}</Typography>
+					</Paper>
+				</TimelineContent>
+			</Grow>
 		</TimelineItem>
 	)
 }
@@ -70,14 +67,15 @@ const Services = () => {
 	const services = [
 		{
 			title: 'Web Design',
-			message: 'I will awesome design your website like modern application and using latest & powerfull technology. I always follow design pattern.',
+			message:
+				'I can do an excellent UI/UX design using the latest and powerful technologys for web design and also can responsive design of the web pages.',
 			iconName: WebIcon,
 			connector: TimelineConnector,
 		},
 		{
 			title: 'Web Development',
 			message:
-				'I will convert your website static to dynamic following best coding structure and I also try to optimized coding structure to make your web application. I can develop rest api for your spa application.',
+				'I can make API or rest API for spa applications and mobile applications and I also can connect API with your spa application or any other application to make the dynamic web application.',
 			iconName: CodeIcon,
 			iconColor: 'primary',
 			connector: TimelineConnector,
@@ -85,7 +83,7 @@ const Services = () => {
 		},
 		{
 			title: 'Android Development',
-			message: 'I can make android application using by react native,It is very good performence.',
+			message: 'I can make a cross-platform application using the react-native and I also can awesome design for any kind of android application.',
 			iconName: DeveloperModeIcon,
 			iconColor: 'secondary',
 			connector: TimelineConnector,
@@ -93,7 +91,7 @@ const Services = () => {
 		},
 		{
 			title: 'IOS Development',
-			message: 'I can make IOS application using by react native,It is also very good performence.',
+			message: 'I can make a cross-platform application using the react-native and I also can awesome design for any kind of IOS application.',
 			iconName: AppleIcon,
 			iconColor: 'primary',
 			iconVariant: 'outlined',
@@ -102,30 +100,31 @@ const Services = () => {
 		},
 		{
 			title: 'Bugs Fixing',
-			message: 'I will solve any kind of problem of your web application.',
+			message: 'I can easily fixed bugs of any kind of web application and also can optimize web application.',
 			iconName: ErrorIcon,
 			iconColor: 'secondary',
 			connector: TimelineConnector,
 			connectorClass: classes.primaryMain,
 		},
 		{
-			title: 'Optimized Website',
-			message: 'I will optimized your website to make very fast loading your website and application.',
+			title: 'Structure Of Coding',
+			message:
+				'I always following strong and best coding structure to make any kind of applications,and my coding styles is very manageable and upgradable and also readable.',
 			iconName: SpeedIcon,
 			iconColor: 'primary',
 			connector: TimelineConnector,
 		},
 		{
 			title: 'Dyploy To Server',
-			message: 'I will dyploy your application any kind of hosting server if you like.',
+			message: 'I can deploy applications or websites in any kind of hosting server.',
 			iconName: PublicIcon,
 		},
 	]
 
 	return (
-		<div>
+		<Container className={styled.services}>
 			<Title title="My" subTitle="Services" />
-			<Timeline align="alternate">
+			<Timeline align="alternate" className={styled.services}>
 				{services.map(({ title, message, iconName, iconColor, iconVariant, connector, connectorClass }, ind) => (
 					<ItemOfTimeLine
 						key={ind}
@@ -136,10 +135,11 @@ const Services = () => {
 						iconColor={iconColor}
 						Connector={connector}
 						connectorClass={connectorClass}
+						stepNumber={ind + 1}
 					/>
 				))}
 			</Timeline>
-		</div>
+		</Container>
 	)
 }
 export default Services
