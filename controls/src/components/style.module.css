@@ -1,0 +1,13 @@
+.padding {
+	padding: 0.75rem;
+}
+.imgParent {
+	max-height: 400px;
+	overflow-y: auto;
+}
+.img {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	display: block;
+}

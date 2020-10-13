@@ -1,0 +1,15 @@
+.ce-block__content {
+	max-width: 95% !important;
+}
+.ce-toolbar__content {
+	max-width: 95% !important;
+}
+.codex-editor__redactor {
+	padding: 0px !important;
+	min-height: 250px;
+}
+@media (max-width: 650px) {
+	.ce-toolbar__actions {
+		right: -10px !important;
+	}
+}
