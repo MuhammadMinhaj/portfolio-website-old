@@ -1,8 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 // Imported Core Components Of Material UI
-import { Container, Paper, Grow } from '@material-ui/core'
-import Typography from '@material-ui/core/Typography'
+import { Container, Paper, Grow, Typography, Divider } from '@material-ui/core'
+
 // Imported Lab Components Of Material Ui
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineOppositeContent, TimelineDot } from '@material-ui/lab'
 
@@ -53,6 +53,7 @@ const ItemOfTimeLine = ({ stepNumber, IconName, iconColor, iconVariant, title, m
 						<Typography variant="h6" component="h1" style={{ textTransform: 'uppercase', fontWeight: 'bold', color: '#607d8b' }}>
 							{title}
 						</Typography>
+						<Divider />
 						<Typography className={styled.textBlock}>{message}</Typography>
 					</Paper>
 				</TimelineContent>

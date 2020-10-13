@@ -48,7 +48,7 @@ const Header = () => {
 		handleNavAnimationBar()
 	}, [])
 	return (
-		<header style={{ height: isMatchedWidth ? '136px' : '96px' }}>
+		<header style={{ height: isMatchedWidth ? '136px' : '96px', background: '#364253' }}>
 			<div id="navContainer" className={styled.navContainer}>
 				<Container>
 					<div className={styled.brand}>

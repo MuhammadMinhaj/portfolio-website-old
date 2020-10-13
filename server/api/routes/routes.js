@@ -1,4 +1,20 @@
+const authRoutes = require('./auth')
+const portfolioRoutes = require('./portfolio')
+const blogsRoute = require('./blogs')
 const routes = [
+	{
+		path: '/api',
+		handle: authRoutes,
+	},
+
+	{
+		path: '/api/portfolio',
+		handle: portfolioRoutes,
+	},
+	{
+		path: '/api/blogs',
+		handle: blogsRoute,
+	},
 	{
 		path: '/',
 		handle: (req, res, next) => {

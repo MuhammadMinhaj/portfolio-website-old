@@ -3,12 +3,14 @@ const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
 
-// Import For Set Middlewares
 const setMiddlewares = require('./api/middlewares/middleware')
+const setRoutes = require('./api/routes/routes')
+
+
+// Import For Set Middlewares
 setMiddlewares(app)
 
 // Import For Set Routes
-const setRoutes = require('./api/routes/routes')
 setRoutes(app)
 
 mongoose

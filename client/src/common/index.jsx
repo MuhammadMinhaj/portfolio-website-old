@@ -136,6 +136,7 @@ export const Search = ({ suggestLists, handleChange, width, size }) => {
 		/>
 	)
 }
+
 const SocialLink = props => <a href={props.href}>{props.icon}</a>
 
 export const SocialIcons = () => (
