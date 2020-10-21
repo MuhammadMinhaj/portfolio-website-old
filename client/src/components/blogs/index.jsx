@@ -32,6 +32,7 @@ import {
 	FiberManualRecord as FiberManualRecordIcon,
 	FormatQuote as FormatQuoteIcon,
 	Visibility as VisibilityIcon,
+	Home as HomeIcon,
 } from '@material-ui/icons'
 
 import { Search, Title, SocialIcons } from '../../common'
@@ -149,9 +150,8 @@ const CustomListItem = ({ list, index }) => {
 	)
 }
 
-export const AppAndDrawer = () => {
+export const BlogsHeader = () => {
 	const classes = useStyles()
-	const theme = useTheme()
 	const dispatch = useDispatch()
 	const state = useSelector(state => state.blog)
 	const isMatchedWidth = useMediaQuery('(min-width:800px)')
@@ -161,35 +161,50 @@ export const AppAndDrawer = () => {
 		return null
 	})
 	return (
+		<AppBar
+			position="fixed"
+			className={clsx(classes.appBar, {
+				[classes.appBarShift]: state.isOpneDrawer,
+			})}
+			color="inherit"
+		>
+			<Toolbar>
+				<IconButton
+					color="inherit"
+					aria-label="open drawer"
+					onClick={e => dispatch(handleDrawer(e))}
+					edge="start"
+					className={clsx(classes.menuButton, state.isOpneDrawer && classes.hide)}
+				>
+					<MenuIcon />
+				</IconButton>
+
+				<Search suggestLists={contents} handleChange={handleSearch} size="small" width="650px" />
+				{isMatchedWidth ? (
+					<>
+						<h3 style={{ marginLeft: '0.5rem' }}>Follow Me</h3>
+						<SocialIcons />
+					</>
+				) : (
+					''
+				)}
+			</Toolbar>
+		</AppBar>
+	)
+}
+
+export const AppAndDrawer = () => {
+	const classes = useStyles()
+	const theme = useTheme()
+	const dispatch = useDispatch()
+	const state = useSelector(state => state.blog)
+	let contents = []
+	state.contents.map(e => {
+		contents.push(...e.posts)
+		return null
+	})
+	return (
 		<>
-			<AppBar
-				position="absolute"
-				className={clsx(classes.appBar, {
-					[classes.appBarShift]: state.isOpneDrawer,
-				})}
-				color="inherit"
-			>
-				<Toolbar>
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						onClick={e => dispatch(handleDrawer(e))}
-						edge="start"
-						className={clsx(classes.menuButton, state.isOpneDrawer && classes.hide)}
-					>
-						<MenuIcon />
-					</IconButton>
-					<Search suggestLists={contents} handleChange={handleSearch} size="small" width="700px" />
-					{isMatchedWidth ? (
-						<>
-							<h3 style={{ marginLeft: '0.5rem' }}>Follow Me</h3>
-							<SocialIcons />
-						</>
-					) : (
-						''
-					)}
-				</Toolbar>
-			</AppBar>
 			<Drawer
 				className={classes.drawer}
 				variant="persistent"
@@ -225,8 +240,8 @@ const WelcomContent = () => {
 	const isMatchedWidth = useMediaQuery('(min-width:800px)')
 	return (
 		<>
-			<Typography variant="h2" style={{ textAlign: 'center', textTransform: 'uppercase', color: '#003955' }}>
-				Welcome
+			<Typography variant="h2" style={{ textAlign: 'center', color: '#003955' }}>
+				Learn With Minhaj
 			</Typography>
 			<br />
 			<Divider />
@@ -242,6 +257,12 @@ const WelcomContent = () => {
 				</p>
 
 				<Rating name="size-large" defaultValue={1} size="large" />
+				<br />
+				<Link to="/" style={{ textDecoration: 'none' }}>
+					<Button startIcon={<HomeIcon />} size="large" color="secondary">
+						Back To Home
+					</Button>
+				</Link>
 				<FormatQuoteIcon className={styled.right} />
 			</div>
 			{!isMatchedWidth ? (
@@ -299,7 +320,7 @@ export const SearchContents = () => {
 		})
 		searchContents.push(...foundedBlogs)
 	})
-	console.log(searchContents)
+
 	return (
 		<Grid container spacing={3}>
 			{searchContents.length !== 0 ? (

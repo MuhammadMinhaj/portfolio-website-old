@@ -33,6 +33,9 @@ const initValues = {
 	thumbnail: {},
 	link: '',
 	description: '',
+	client: '',
+	industry: '',
+	time: '',
 	tools: [],
 	images: [],
 	group: '',
@@ -145,7 +148,6 @@ export default (state = initialState, action) => {
 			state = {
 				...state,
 				success: action.payload.message,
-				updateGroup: {},
 				group: action.payload.group,
 				isLoading: false,
 				isLoadingTow: false,
@@ -155,7 +157,8 @@ export default (state = initialState, action) => {
 			state = {
 				...state,
 				error: '',
-				group: action.payload,
+				success: action.payload.message,
+				group: action.payload.group,
 				isLoadingTow: false,
 				isLoading: false,
 			}

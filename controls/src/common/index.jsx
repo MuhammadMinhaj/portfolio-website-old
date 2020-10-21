@@ -196,11 +196,12 @@ const CustomDialogActions = withStyles(theme => ({
 	},
 }))(DialogActions)
 
-export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSubmit }) => {
+export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSubmit, width, isLoading }) => {
 	const [screen, setScreen] = useState(false)
 	const handleClickScreen = () => {
 		setScreen(!screen)
 	}
+
 	return (
 		<div>
 			<Dialog
@@ -209,7 +210,7 @@ export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSub
 				open={open}
 				disableEnforceFocus={true}
 				fullWidth={true}
-				maxWidth="md"
+				maxWidth={width ? width : 'md'}
 				fullScreen={screen}
 			>
 				<form onSubmit={handleSubmit}>
@@ -220,6 +221,7 @@ export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSub
 					<CustomDialogContent dividers>{bodyComponent()}</CustomDialogContent>
 					<CustomDialogActions style={{ justifyContent: 'space-between' }}>
 						<IconButton onClick={handleClickScreen}>{screen ? <FullscreenExitIcon /> : <FullscreenIcon />}</IconButton>
+						<Loader isLoading={isLoading ? true : false} />
 						<Button autoFocus type="submit" color="primary" variant="contained" startIcon={<UpdateIcon />}>
 							Update
 						</Button>

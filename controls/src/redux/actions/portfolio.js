@@ -241,7 +241,10 @@ export const handleClickDeleteGroup = id => {
 
 			dispatch({
 				type: PORTFOLIO_GROUP_DELETE_SUCCESS,
-				payload: group,
+				payload: {
+					message: res.data.message,
+					group,
+				},
 			})
 		} catch (error) {
 			dispatch({
@@ -324,7 +327,7 @@ export const createHandleSubmit = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const {
-			createProject: { title, thumbnail, link, description, tools, images, group },
+			createProject: { title, thumbnail, link, description, tools, images, group, client, industry, time },
 		} = state.portfolio
 		dispatch({
 			type: PORTFOLIO_LOADING_OPENED,
@@ -360,7 +363,12 @@ export const createHandleSubmit = () => {
 			data.append('link', link)
 			data.append('description', description)
 			data.append('tools', tools)
+			data.append('client', client)
+			data.append('industry', industry)
+			data.append('time', time)
+
 			let titles = []
+
 			images.forEach(img => {
 				data.append('images', img.file)
 				titles.push(img.title)
@@ -490,7 +498,7 @@ export const updateHandleSubmit = e => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const {
-			updateProject: { _id, title, thumbnail, link, description, tools, images, group, imgDeleteId },
+			updateProject: { _id, title, thumbnail, link, description, tools, client, industry, time, images, group, imgDeleteId },
 			projects,
 		} = state.portfolio
 		dispatch({
@@ -537,6 +545,9 @@ export const updateHandleSubmit = e => {
 			data.append('link', link)
 			data.append('description', description)
 			data.append('tools', tools)
+			data.append('client', client)
+			data.append('industry', industry)
+			data.append('time', time)
 			data.append('imgDeleteId', imgDeleteId.toString())
 			data.append('oldImages', JSON.stringify(oldImages))
 			data.append('group', group)
@@ -565,6 +576,9 @@ export const updateHandleSubmit = e => {
 					p.thumbnail = res.data.project.thumbnail
 					p.title = res.data.project.title
 					p.tools = res.data.project.tools
+					p.client = res.data.project.client
+					p.industry = res.data.project.industry
+					p.time = res.data.project.time
 				}
 			})
 

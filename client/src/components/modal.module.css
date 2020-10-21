@@ -1,0 +1,53 @@
+* {
+	box-sizing: border-box;
+}
+.content {
+	position: fixed;
+	padding: 1rem;
+	overflow-y: auto;
+	max-height: 570px;
+}
+.previewer {
+	/* height: 572px; */
+	/* overflow-y: auto; */
+	position: relative;
+	box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+}
+.previewer .stepper {
+	position: fixed;
+	bottom: 0%;
+	left: 30%;
+	max-width: 500px;
+}
+
+.previewer .prev,
+.previewer .next {
+	/* position: absolute; */
+	position: fixed;
+	top: 50%;
+}
+.previewer .prev .icon,
+.previewer .next .icon {
+	position: fixed;
+}
+.previewer .prev {
+	left: 1.25rem;
+}
+.previewer .next {
+	right: 40%;
+}
+@media only screen and (max-width: 600px) {
+	.content {
+		position: static;
+		overflow-y: unset;
+		max-height: unset;
+	}
+
+	.previewer .prev {
+		left: 0.5rem;
+		box-shadow: none;
+	}
+	.previewer .next {
+		right: 4rem;
+	}
+} ;

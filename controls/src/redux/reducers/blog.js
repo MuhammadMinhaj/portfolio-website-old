@@ -158,7 +158,6 @@ export default (state = initialState, action) => {
 			state = {
 				...state,
 				group: [...action.payload.group],
-				updateGroup: '',
 				success: action.payload.message,
 				isUpdateLoading: false,
 			}

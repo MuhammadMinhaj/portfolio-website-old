@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Container, Grow } from '@material-ui/core'
+import { Button, Container, Grow, Typography } from '@material-ui/core'
 import Confetti from 'react-confetti'
 import styled from './style.module.css'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
@@ -26,16 +26,16 @@ const Slider = () => {
 						<Grow in>
 							<div className={styled.middleContainer}>
 								<SocialIcons />
-								<h4 style={{ color: '#ffffffbd' }}>
+								<Typography variant="h6" style={{ color: '#ffffffbd' }}>
 									<span style={{ color: 'red' }}>I'm</span> Muhammad Minhaj
-								</h4>
-								<h1>I'm</h1>
-								<h1 className={styled.animateText} style={{ height: '120px' }}>
+								</Typography>
+								<Typography variant="h4">I'm</Typography>
+								<Typography variant="h4" style={{ height: '120px' }}>
 									<Typer
 										// heading="I'm"
 										dataText={['A Web Designer', 'A Full-Stack Javascript Developer', 'A Full-Stack Web & Mobile Application Developer']}
 									/>
-								</h1>
+								</Typography>
 								<Button size="large" startIcon={<ArrowForwardIcon />} variant="outlined" color="secondary">
 									Hire Me
 								</Button>

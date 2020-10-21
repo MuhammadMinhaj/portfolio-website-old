@@ -30,16 +30,6 @@
 }
 
 /* --------------------- Styled Of Header Components ---------------------- */
-.iconsContainer > a > svg {
-	margin: 0.5rem;
-	font-size: 1.75rem;
-}
-.iconsContainer > a :hover {
-	transform: scale(0.95);
-	cursor: pointer;
-	transition: all 0.5s;
-	color: white;
-}
 .navContainer {
 	padding: 10px 0px 10px 0px;
 	box-shadow: 0pt 1pt 3pt 1pt #00000035;
@@ -81,7 +71,7 @@
 	min-width: 100px;
 	text-align: center;
 	/* box-shadow: 0pt 0pt 3pt 0pt #a5a5a5b3; */
-	font-weight: 600;
+	/* font-weight: 600; */
 }
 
 .nav > ul > li > a:hover {

@@ -5,6 +5,7 @@ const { isValidApiKey, isAuthenticated } = require('../middlewares/auth')
 const uploads = require('../middlewares/upload')
 // Require all controllers
 const {
+	getPublicDataGetController,
 	getAllPostfolioGroupGetController,
 	createPortfolioGroupPostController,
 	updatePortfolioGroupPutController,
@@ -14,6 +15,8 @@ const {
 	updatePortfolioItemPutController,
 	deletePortfolioItemDeleteController,
 } = require('../controllers/portfolio')
+
+router.get('/data', isValidApiKey(), getPublicDataGetController)
 
 router.get('/', isValidApiKey(), isAuthenticated(), getAllPostfolioGroupGetController)
 router.post('/create', isValidApiKey(), isAuthenticated(), createPortfolioGroupPostController)

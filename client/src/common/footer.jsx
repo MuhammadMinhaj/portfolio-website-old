@@ -1,11 +1,12 @@
 import React from 'react'
+import { Typography } from '@material-ui/core'
 import styled from './style.module.css'
 
 const Footer = () => {
 	return (
 		<footer className={styled.footer}>
-			<h4>Copyright ©2020 All Rights Reserved</h4>
-			<h5>Developed By Muhammad Minhaj</h5>
+			<Typography variant="subtitle1">Copyright ©2020 All Rights Reserved</Typography>
+			<Typography variant="subtitle2">Developed By Muhammad Minhaj</Typography>
 		</footer>
 	)
 }

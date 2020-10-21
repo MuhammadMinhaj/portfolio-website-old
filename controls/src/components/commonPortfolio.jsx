@@ -227,19 +227,24 @@ const GetStepContent = ({
 			return (
 				<>
 					<Grid item sm={6}>
-						<InlineFormControl field={{ name: 'link', label: 'Link' }} handleChange={handleChange} value={fieldsObject.link} />
+						<InlineFormControl field={{ name: 'industry', label: 'Industry' }} handleChange={handleChange} value={fieldsObject.industry} />
+						<InlineFormControl field={{ name: 'client', label: 'Client' }} handleChange={handleChange} value={fieldsObject.client} />
 						<InlineFormControl
 							field={{ name: 'description', label: 'Description' }}
 							isMultiple={true}
-							rows={10}
+							rows={6}
 							handleChange={handleChange}
 							value={fieldsObject.description}
 						/>
 					</Grid>
 					<Grid item sm={6}>
+						<InlineFormControl field={{ name: 'time', label: 'Time' }} handleChange={handleChange} value={fieldsObject.time} />
+
+						<InlineFormControl field={{ name: 'link', label: 'Link' }} handleChange={handleChange} value={fieldsObject.link} />
 						<FormControl margin="dense" fullWidth>
 							<CheckboxesTags defaultValues={tagsValues} getValues={getTagsValues} />
 						</FormControl>
+
 						<FormControl margin="dense" fullWidth>
 							<CustomSelectionItem handleChange={handleChange} lists={state.group} value={selectedGroup} />
 						</FormControl>

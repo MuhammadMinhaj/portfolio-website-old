@@ -1,13 +1,16 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import styled from './style.module.css'
-import { TextField } from '@material-ui/core'
+import { TextField, IconButton } from '@material-ui/core'
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
-import FacebookIcon from '@material-ui/icons/Facebook'
-import InstagramIcon from '@material-ui/icons/Instagram'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import GitHubIcon from '@material-ui/icons/GitHub'
+import {
+	Facebook as FacebookIcon,
+	Instagram as InstagramIcon,
+	Twitter as TwitterIcon,
+	GitHub as GitHubIcon,
+	LinkedIn as LinkedInIcon,
+} from '@material-ui/icons'
 
 export const Title = props => (
 	<h1 className={styled.title}>
@@ -137,15 +140,35 @@ export const Search = ({ suggestLists, handleChange, width, size }) => {
 	)
 }
 
-const SocialLink = props => <a href={props.href}>{props.icon}</a>
+const socialLists = [
+	{
+		icon: <FacebookIcon style={{ color: '#3578E5' }} />,
+		href: 'https://www.facebook.com/profile.php?id=100014744408169',
+	},
+	{
+		icon: <InstagramIcon style={{ color: '#b51a0e' }} />,
+		href: 'https://instagram.com/',
+	},
+	{
+		icon: <TwitterIcon style={{ color: '#1da1f2' }} />,
+		href: 'https://twitter.com/',
+	},
+	{
+		icon: <GitHubIcon style={{ color: 'black' }} />,
+		href: 'https://github.com/muhammad-minhaj',
+	},
+	{
+		icon: <LinkedInIcon style={{ color: '#1994e0' }} />,
+		href: 'https://github.com/muhammad-minhaj',
+	},
+]
 
 export const SocialIcons = () => (
-	<div className={styled.iconsContainer}>
-		<SocialLink icon={<FacebookIcon style={{ color: '#3578E5' }} />} href="https://www.facebook.com/profile.php?id=100014744408169" />
-
-		<SocialLink icon={<InstagramIcon style={{ color: '#b51a0e' }} />} href="https://instagram.com/" />
-
-		<SocialLink icon={<TwitterIcon style={{ color: '#1da1f2' }} />} href="https://twitter.com/" />
-		<SocialLink icon={<GitHubIcon style={{ color: 'black' }} />} href="https://github.com/muhammad-minhaj" />
+	<div>
+		{socialLists.map((social, i) => (
+			<IconButton key={i} href={social.href}>
+				{social.icon}
+			</IconButton>
+		))}
 	</div>
 )

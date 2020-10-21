@@ -1,501 +1,60 @@
 import {
+	IS_LOADING_OPENED,
+	LOAD_PORTFOLIO_DATA_SUCCESS,
+	LOAD_PORTFOLIO_DATA_FAILED,
 	HANDLE_ITEM_MODAL,
 	HANDLE_TAB_CLICK,
+	HANDLE_TAB_CLICK_SELECTED_GROUP,
 	HANDLE_PAGINATION,
-	MODAL_PAGE_INCREMENT_AND_DECREMENT,
 	HANDLE_PORTFOLIO_SEARCH,
 } from '../constants/type'
 
 const initalState = {
 	isOpenModal: false,
+	isLoading: false,
+	error: '',
 	modalItem: {},
 	correntTab: 0,
 	exactPage: 1,
 	itemPerPage: 6,
 	avoidPage: 0,
-	correntModalPage: 1,
 	searchTerms: '',
-	wrappers: [
-		{
-			name: 'E-Commerce Websites',
-			items: [
-				{
-					title: 'Chaldal Website1',
+	groupId: null,
 
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website1',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website1',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website1',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website3',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website4',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website6',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website5',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website7',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website8',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website9',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Shop Website10',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Evaly Website11',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website12',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Shop Website13',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Evaly Website14',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website15',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Shop Website16',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Evaly Website17',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Chaldal Website18',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Shop Website19',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-				{
-					title: 'Evaly Website20',
-					img: 'portfolio/websiteimg.png',
-					pages: [
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Home Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'About Page',
-						},
-						{
-							img: 'portfolio/websiteimg.png',
-							title: 'Contact Page',
-						},
-					],
-				},
-			],
-		},
-		{
-			name: 'Wo-Commerce Websites',
-			items: [
-				{
-					title: 'Amazon Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Alibaba Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Ali Express Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Amazon Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Alibaba Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Ali Express Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Ali Express Website',
-					img: 'portfolio/websiteimg.png',
-				},
-			],
-		},
-		{
-			name: 'Educational Websites',
-			items: [
-				{
-					title: 'JASA Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'BUET Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'CTG COLLEGAE Website',
-					img: 'portfolio/websiteimg.png',
-				},
-			],
-		},
-		{
-			name: 'Others',
-			items: [
-				{
-					title: 'Affiliate For Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Android Application Website',
-					img: 'portfolio/websiteimg.png',
-				},
-				{
-					title: 'Magazine Website',
-					img: 'portfolio/websiteimg.png',
-				},
-			],
-		},
-	],
+	groups: [],
+	projects: [],
 }
 
 const reducer = (state = initalState, action) => {
 	switch (action.type) {
+		case IS_LOADING_OPENED:
+			state = {
+				...state,
+				isLoading: true,
+			}
+			return state
+		case LOAD_PORTFOLIO_DATA_SUCCESS:
+			state = {
+				...state,
+				groups: [...action.payload.groups],
+				projects: [...action.payload.projects],
+				isLoading: false,
+				groupId: action.payload.groups[0]._id,
+				error: '',
+			}
+			return state
+		case LOAD_PORTFOLIO_DATA_FAILED:
+			state = {
+				...state,
+				error: action.payload,
+				isLoading: false,
+			}
+			return state
 		case HANDLE_ITEM_MODAL:
 			state = {
 				...state,
 				isOpenModal: !state.isOpenModal,
 				modalItem: { ...action.payload },
-				correntModalPage: 1,
 			}
 			return state
 		case HANDLE_TAB_CLICK:
@@ -507,6 +66,12 @@ const reducer = (state = initalState, action) => {
 				avoidPage: 0,
 			}
 			return state
+		case HANDLE_TAB_CLICK_SELECTED_GROUP:
+			state = {
+				...state,
+				groupId: action.payload,
+			}
+			return state
 		case HANDLE_PAGINATION:
 			state = {
 				...state,
@@ -514,12 +79,7 @@ const reducer = (state = initalState, action) => {
 				avoidPage: action.payload * state.itemPerPage - state.itemPerPage,
 			}
 			return state
-		case MODAL_PAGE_INCREMENT_AND_DECREMENT:
-			state = {
-				...state,
-				correntModalPage: action.payload,
-			}
-			return state
+
 		case HANDLE_PORTFOLIO_SEARCH:
 			state = {
 				...state,
@@ -532,10 +92,3 @@ const reducer = (state = initalState, action) => {
 }
 
 export default reducer
-
-// const wrappers = [
-// 	{
-// 		name: 'Somthing',
-// 		items: [{ name: 'item1' }, { name: 'item2' }, { name: 'item3' }],
-// 	},
-// ]

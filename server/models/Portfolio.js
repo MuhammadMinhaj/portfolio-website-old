@@ -11,12 +11,28 @@ const groupSchema = new Schema({
 })
 exports.PortfolioGroup = new model('PortfolioGroup', groupSchema)
 
+const CustomDate = () => {
+	let today = new Date()
+	let dd = String(today.getDate()).padStart(2, '0')
+	let mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
+	let yyyy = today.getFullYear()
+	today = dd + '/' + mm + '/' + yyyy
+	return today
+}
+
 const schema = new Schema({
 	title: initValues(true),
 	description: initValues(),
 	thumbnail: initValues(true),
 	tools: initValues(true),
 	link: initValues(),
+	client: initValues(),
+	industry: initValues(),
+	time: initValues(),
+	createdAt: {
+		type: String,
+		default: CustomDate(),
+	},
 	images: [
 		{
 			title: initValues(true),

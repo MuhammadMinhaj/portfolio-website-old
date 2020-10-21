@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Grid, Paper, Typography } from '@material-ui/core'
+import { Paper, Typography, TextField, IconButton } from '@material-ui/core'
+
+import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
 
 import {
 	handleClearationAll,
@@ -21,7 +23,8 @@ import {
 } from '../redux/actions/portfolio'
 
 // Common Components Imported
-import { CustomTabs, CustomInlineForm, CustomItem, CustomAlert, Loader } from '../common'
+import { CustomTabs, CustomInlineForm, CustomAlert, Loader, CustomModal, ConfimDialog } from '../common'
+import CustomTable from '../common/table'
 import { ProjectStepper } from './commonPortfolio'
 // Style
 import styled from './style.module.css'
@@ -29,6 +32,51 @@ import styled from './style.module.css'
 const CreateGroup = () => {
 	const { isLoading, isLoadingTow, groupname, group, updateGroup } = useSelector(state => state.portfolio)
 	const dispatch = useDispatch()
+	const [open, setOpen] = useState(false)
+	const [settings, setSettings] = useState({
+		isOpen: false,
+		error: '',
+		text: '',
+		id: null,
+	})
+
+	const handleClick = item => {
+		setOpen(!open)
+		dispatch(handleSelectUpdateGroup(item))
+	}
+
+	const handleToggle = id => {
+		setSettings({
+			...settings,
+			isOpen: !settings.isOpen,
+			id,
+		})
+	}
+	const handleChane = e => {
+		e.persist()
+		setSettings({
+			...settings,
+			text: e.target.value,
+		})
+	}
+	const handleSubmit = () => {
+		if (settings.text === 'CONFIRM') {
+			dispatch(handleClickDeleteGroup(settings.id))
+
+			setSettings({
+				isOpen: false,
+				error: '',
+				text: '',
+				id: null,
+			})
+		} else {
+			setSettings({
+				...settings,
+				error: 'Failed to confirmation,Cannot delete without valid confirmation!',
+			})
+		}
+	}
+
 	return (
 		<>
 			<CustomInlineForm
@@ -38,21 +86,42 @@ const CreateGroup = () => {
 			/>
 			<Paper className={styled.padding} square variant="outlined">
 				<Loader isLoading={isLoading} />
+				<ConfimDialog
+					isOpen={settings.isOpen}
+					error={settings.error}
+					handleToggle={handleToggle}
+					clearError={() => setSettings({ ...settings, error: '' })}
+					handleChange={handleChane}
+					contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
+					handleConfirm={handleSubmit}
+				/>
 
-				<Grid container spacing={2}>
-					{group.map((g, i) => (
-						<CustomItem
-							key={i}
-							isLoading={isLoadingTow}
-							item={g}
-							updateItem={updateGroup}
-							selectUpdateHandle={() => dispatch(handleSelectUpdateGroup(g))}
-							updateHandleChange={e => dispatch(handleChangeUpdateGroup(e))}
-							updateHandleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
-							handleClickDelete={id => dispatch(handleClickDeleteGroup(id))}
-						/>
-					))}
-				</Grid>
+				<CustomModal
+					title="Update"
+					open={open}
+					handleClick={() => handleClick()}
+					bodyComponent={() => (
+						<TextField variant="outlined" value={updateGroup.title} onChange={e => dispatch(handleChangeUpdateGroup(e))} fullWidth />
+					)}
+					width="sm"
+					handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
+					isLoading={isLoadingTow}
+				/>
+
+				<CustomTable
+					rows={group}
+					headCells={[{ id: 'name', numeric: false, disablePadding: false, label: 'Group' }]}
+					control={item => (
+						<>
+							<IconButton color="primary" onClick={() => handleClick(item)}>
+								<EditIcon />
+							</IconButton>
+							<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
+								<DeleteIcon />
+							</IconButton>
+						</>
+					)}
+				/>
 			</Paper>
 		</>
 	)
@@ -70,7 +139,14 @@ const AddPortfolioProject = () => {
 				handleChangeFile={files => dispatch(createHandleChangeFile(files))}
 				handleSaveFiles={files => dispatch(createHandleSaveFiles(files))}
 				handleChange={event => dispatch(createHandleChange(event))}
-				fieldsObject={{ title: createProject.title, link: createProject.link, description: createProject.description }}
+				fieldsObject={{
+					title: createProject.title,
+					link: createProject.link,
+					description: createProject.description,
+					client: createProject.client,
+					industry: createProject.industry,
+					time: createProject.time,
+				}}
 				tagsValues={createProject.tools}
 				getTagsValues={tags => dispatch(createHandleChange(tags))}
 				defaultFileThumbnail={createProject.thumbnail}

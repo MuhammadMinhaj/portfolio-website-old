@@ -32,6 +32,7 @@ import {
 	handleClickDeleteProject,
 } from '../redux/actions/portfolio'
 import { CustomLoader, CustomModal, CustomAlert, ConfimDialog } from '../common'
+
 import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
 import { ProjectStepper } from './commonPortfolio'
 const TabBar = () => {
@@ -145,7 +146,14 @@ const UpdateForm = () => {
 
 			<ProjectStepper
 				handleChange={e => dispatch(handleChangeUpdateProject(e))}
-				fieldsObject={{ title: updateProject.title, description: updateProject.description, link: updateProject.link }}
+				fieldsObject={{
+					title: updateProject.title,
+					description: updateProject.description,
+					link: updateProject.link,
+					client: updateProject.client,
+					industry: updateProject.industry,
+					time: updateProject.time,
+				}}
 				previewImages={updateProject.images}
 				tagsValues={updateProject.tools.split(',')}
 				defaultFileThumbnail={updateProject.thumbnail}

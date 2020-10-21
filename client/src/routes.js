@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, Route } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import Home from './components'
 import About from './components/about'
 import Skills from './components/skills'
@@ -8,6 +9,8 @@ import Portfolio from './components/portfolio'
 import Services from './components/services'
 import Blogs from './components/blogs/'
 import ContentBlog from './components/blogs/blogContent'
+
+import { getDataFromServer } from './redux/actions/portfolio'
 
 const routes = [
 	{
@@ -46,6 +49,10 @@ const routes = [
 ]
 
 const Routes = () => {
+	const dispatch = useDispatch()
+	useEffect(() => {
+		dispatch(getDataFromServer())
+	})
 	return (
 		<>
 			<Switch>

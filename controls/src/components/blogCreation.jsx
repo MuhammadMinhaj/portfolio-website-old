@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 // import CKEditor from 'ckeditor4-react'
 import {
@@ -14,13 +14,15 @@ import {
 	Button,
 	Card,
 	CircularProgress,
+	IconButton,
 } from '@material-ui/core'
-import { Send as SendIcon } from '@material-ui/icons'
+import { Send as SendIcon, Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 
 import styled from './style.module.css'
 
 // Imported Common Components
-import { CustomTabs, CustomInlineForm, CustomItem, CustomSelectionItem, CustomFileUploadUI, Loader, CustomAlert } from '../common'
+import { CustomTabs, CustomInlineForm, CustomSelectionItem, CustomFileUploadUI, Loader, CustomAlert, CustomModal, ConfimDialog } from '../common'
+import CustomTable from '../common/table'
 import ReactEditor from '../common/react-editor'
 // Imported All Actions
 import {
@@ -128,13 +130,59 @@ const BlogCreation = () => {
 	)
 }
 
-const GroupCreation = () => {
+const CreateGroup = () => {
 	const dispatch = useDispatch()
 	const state = useSelector(state => state.blog)
 	const { groupname, group, updateGroup, isUpdateLoading } = state
+
+	const [open, setOpen] = useState(false)
+	const [settings, setSettings] = useState({
+		isOpen: false,
+		error: '',
+		text: '',
+		id: null,
+	})
+
 	useEffect(() => {
 		dispatch(getBlogsHandle())
 	}, [dispatch])
+
+	const handleClick = item => {
+		setOpen(!open)
+		dispatch(handleClickUpdateGroup(item))
+	}
+
+	const handleToggle = id => {
+		setSettings({
+			...settings,
+			isOpen: !settings.isOpen,
+			id,
+		})
+	}
+	const handleChane = e => {
+		e.persist()
+		setSettings({
+			...settings,
+			text: e.target.value,
+		})
+	}
+	const handleSubmit = () => {
+		if (settings.text === 'CONFIRM') {
+			dispatch(handleClickDeleteGroup(settings.id))
+			setSettings({
+				isOpen: false,
+				error: '',
+				text: '',
+				id: null,
+			})
+		} else {
+			setSettings({
+				...settings,
+				error: 'Failed to confirmation,Cannot delete without valid confirmation!',
+			})
+		}
+	}
+
 	return (
 		<>
 			<CustomInlineForm
@@ -142,22 +190,49 @@ const GroupCreation = () => {
 				handleChange={e => dispatch(handleGroupNameChange(e))}
 				handleSubmit={e => dispatch(handleGroupNameSubmit(e))}
 			/>
-			<Paper className={styled.padding} square={true} variant="outlined">
+			<Paper className={styled.padding} square variant="outlined">
 				<Loader isLoading={state.isLoading} />
-				<Grid container spacing={2}>
-					{group.map((item, index) => (
-						<CustomItem
-							isLoading={isUpdateLoading}
-							item={item}
-							updateItem={updateGroup}
-							selectUpdateHandle={() => dispatch(handleClickUpdateGroup(item))}
-							updateHandleChange={e => dispatch(handleChangeUpdateGroup(e))}
-							updateHandleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
-							handleClickDelete={id => dispatch(handleClickDeleteGroup(id))}
-							key={index}
+				<ConfimDialog
+					isOpen={settings.isOpen}
+					error={settings.error}
+					handleToggle={handleToggle}
+					clearError={() => setSettings({ ...settings, error: '' })}
+					handleChange={handleChane}
+					contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
+					handleConfirm={handleSubmit}
+				/>
+				<CustomModal
+					title="Update"
+					open={open}
+					handleClick={() => handleClick()}
+					bodyComponent={() => (
+						<TextField
+							variant="outlined"
+							value={updateGroup ? updateGroup.title : ''}
+							onChange={e => dispatch(handleChangeUpdateGroup(e))}
+							fullWidth
 						/>
-					))}
-				</Grid>
+					)}
+					width="sm"
+					handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
+					isLoading={isUpdateLoading}
+				/>
+
+				<CustomTable
+					rows={group}
+					headCells={[{ id: 'name', numeric: false, disablePadding: false, label: 'Group' }]}
+					control={item => (
+						<>
+							<IconButton color="primary" onClick={() => handleClick(item)}>
+								<EditIcon />
+							</IconButton>
+							<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
+								<DeleteIcon />
+							</IconButton>
+						</>
+					)}
+					handleSelectedDelete={list => console.log(list)}
+				/>
 			</Paper>
 		</>
 	)
@@ -176,7 +251,7 @@ const Creation = () => {
 
 			{state.success && <CustomAlert closeHandle={() => dispatch(alertHandleClose())} isError={false} value={state.success} />}
 
-			{tabIndex === 0 ? <BlogCreation /> : <GroupCreation />}
+			{tabIndex === 0 ? <BlogCreation /> : <CreateGroup />}
 		</Container>
 	)
 }

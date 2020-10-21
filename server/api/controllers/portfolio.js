@@ -5,7 +5,16 @@ const { PortfolioGroup, Portfolio } = require('../../models/Portfolio')
 
 // Require validator
 const validator = require('../../utils/validator')
-const { rejects } = require('assert')
+
+exports.getPublicDataGetController = async (req, res, next) => {
+	try {
+		const groups = await PortfolioGroup.find()
+		const projects = await Portfolio.find()
+		res.status(200).json({ groups, projects })
+	} catch (e) {
+		next(e)
+	}
+}
 
 // Get All Portfolio Group
 exports.getAllPostfolioGroupGetController = async (req, res, next) => {
@@ -88,7 +97,7 @@ const removeFileFromHost = path => {
 function removeFiles(files) {
 	if (files) {
 		if (files.thumbnail) {
-			removeFileFromHost(req.files.thumbnail[0].path)
+			removeFileFromHost(files.thumbnail[0].path)
 		}
 		if (files.images) {
 			files.images.forEach(img => {
@@ -139,7 +148,7 @@ exports.getAllPostfolioProjectGetController = async (req, res, next) => {
 exports.createPortfolioItemPostController = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		const { title, description, tools, titles, link } = req.body
+		const { title, description, tools, titles, link, client, industry, time } = req.body
 		const hasGroup = await PortfolioGroup.findOne({ _id: id })
 
 		if (!hasGroup) {
@@ -149,6 +158,7 @@ exports.createPortfolioItemPostController = async (req, res, next) => {
 		let errors = {
 			...validator(title, null, 200, 'title'),
 			...validator(tools, null, null, 'tools'),
+			...validator(time, null, null, 'time'),
 		}
 		if (!req.files) {
 			errors.files = 'Not found any files with request'
@@ -187,6 +197,9 @@ exports.createPortfolioItemPostController = async (req, res, next) => {
 			tools,
 			images,
 			link,
+			client,
+			industry,
+			time,
 			group: hasGroup._id,
 		})
 		const createdPortfolioItem = await createPortfolioItem.save()
@@ -204,11 +217,12 @@ exports.createPortfolioItemPostController = async (req, res, next) => {
 exports.updatePortfolioItemPutController = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		const { title, description, tools, titles, link, oldImages, imgDeleteId, group } = req.body
+		const { title, description, tools, titles, link, oldImages, imgDeleteId, group, client, industry, time } = req.body
 
 		let errors = {
 			...validator(title, null, 200, 'title'),
 			...validator(tools, null, null, 'tools'),
+			...validator(time, null, null, 'time'),
 		}
 		if (Object.keys(errors).length !== 0) {
 			removeFiles(req.files)
@@ -226,6 +240,9 @@ exports.updatePortfolioItemPutController = async (req, res, next) => {
 		hasProject.description = description
 		hasProject.tools = tools
 		hasProject.link = link
+		hasProject.client = client
+		hasProject.industry = industry
+		hasProject.time = time
 		hasProject.group = mongoose.Types.ObjectId(group)
 		hasProject.thumbnail = req.files
 			? req.files.thumbnail

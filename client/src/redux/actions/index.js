@@ -1,4 +1,7 @@
-import { HANDLE_MENU, INCREMENT_STEP, DECREMENT_STEP, DYNAMIC_ACTIVE_STEP, HANDLE_MODAL } from '../constants/type'
+import {  HANDLE_MENU, INCREMENT_STEP, DECREMENT_STEP, DYNAMIC_ACTIVE_STEP, HANDLE_MODAL } from '../constants/type'
+
+// Page Scroll Progress
+
 
 // Menu Toggle
 export const handleMenu = () => {
