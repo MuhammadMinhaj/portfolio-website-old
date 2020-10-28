@@ -1,7 +1,19 @@
 const fs = require('fs')
+const readTime = require('reading-time')
 const { Blogs, Post } = require('../../models/Blogs')
 // Require validator
 const validator = require('../../utils/validator')
+const { removeFilePathFromFs } = require('../../utils')
+
+exports.getPublicDataGetController = async (req, res, next) => {
+	try {
+		const blogs = await Blogs.find()
+		const posts = await Post.find()
+		res.status(200).json({ blogs, posts })
+	} catch (e) {
+		next(e)
+	}
+}
 
 // Get all blogs group
 exports.getBlogsGroupGetController = async (req, res, next) => {
@@ -14,23 +26,27 @@ exports.getBlogsGroupGetController = async (req, res, next) => {
 
 exports.createBlogsPostController = async (req, res, next) => {
 	try {
-		console.log('Assalamu Alaikum')
 		const { title } = req.body
+		const file = req.file
 		const errors = {
 			...validator(title, null, null, 'title'),
 		}
 		if (Object.keys(errors).length !== 0) {
+			removeFilePathFromFs(null, req)
 			return res.status(422).json({ message: 'Invalid Creadentials', errors })
 		}
 		const hasGroup = await Blogs.findOne({ title })
 		if (hasGroup) {
+			removeFilePathFromFs(null, req)
 			return res.status(409).json({ message: `This group already created by the name of ${hasGroup.title}` })
 		}
-		const createGroup = new Blogs({ title })
+		const createGroup = new Blogs({ title, thumbnail: file ? `/uploads/${file.filename}` : '' })
 		const createdGroup = await createGroup.save()
 		if (!createdGroup) {
+			removeFilePathFromFs(null, req)
 			return res.status(500).json({ message: 'Internal server error' })
 		}
+		console.log(createdGroup)
 		res.status(201).json({ message: 'Successfully created blogs group', blogsGroup: createdGroup })
 	} catch (e) {
 		next(e)
@@ -41,20 +57,23 @@ exports.updateBlogsPutController = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		const { title } = req.body
-
+		const file = req.file
 		const errors = {
 			...validator(title, null, null, 'title'),
 		}
 		if (Object.keys(errors).length !== 0) {
+			removeFilePathFromFs(null, req)
 			return res.status(422).json({ message: 'Invalid Creadentials', errors })
 		}
 		const hasGroup = await Blogs.findOne({ _id: id })
 		if (!hasGroup) {
+			removeFilePathFromFs(null, req)
 			return res.status(404).json({ message: 'Post group is not available' })
 		}
 		const hasTitle = await Blogs.findOne({ title })
 		if (hasTitle) {
 			if (hasGroup._id.toString() !== hasTitle._id.toString()) {
+				removeFilePathFromFs(null, req)
 				return res.status(409).json({ message: `This group already created by the name of ${hasTitle.title}` })
 			}
 		}
@@ -62,13 +81,19 @@ exports.updateBlogsPutController = async (req, res, next) => {
 			{ _id: id },
 			{
 				title,
+				thumbnail: file ? `/uploads/${file.filename}` : hasGroup.thumbnail,
 			},
 			{ new: true }
 		)
 		if (!updatedGpTitle) {
+			removeFilePathFromFs(null, req)
 			return res.status(500).json({ message: 'Internal server error' })
 		}
-		res.status(200).json({ message: 'Successfully updated title', portfolioGroup: updatedGpTitle })
+		if (file) {
+			removeFilePathFromFs(`public${hasGroup.thumbnail}`)
+		}
+		console.log(file)
+		res.status(200).json({ message: 'Successfully updated title', group: updatedGpTitle })
 	} catch (e) {
 		next(e)
 	}
@@ -88,7 +113,9 @@ exports.deleteBlogsDeleteController = async (req, res, next) => {
 				return res.status(500).json({ message: 'Internal server error' })
 			}
 		})
-		res.status(200).json({ message: 'Successfully deleted group and blogs items', group: deletedGroup })
+
+		removeFilePathFromFs(`public/${deletedGroup.thumbnail}`)
+		res.status(200).json({ message: 'Successfully deleted group and blogs post', group: deletedGroup })
 	} catch (e) {
 		next(e)
 	}
@@ -105,7 +132,7 @@ exports.getAllBlogsPostsGetController = async (req, res, next) => {
 exports.createPostPostController = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		const { title, content, keywords } = req.body
+		const { title, content, keywords, lang } = req.body
 		const file = req.file
 		const hasBlogs = await Blogs.findOne({ _id: id })
 		if (!hasBlogs) {
@@ -122,6 +149,7 @@ exports.createPostPostController = async (req, res, next) => {
 		const errors = {
 			...validator(title, null, null, 'title'),
 			...validator(content, null, null, 'content'),
+			...validator(lang, null, null, 'lang'),
 		}
 		if (Object.keys(errors).length !== 0) {
 			if (file) {
@@ -151,6 +179,9 @@ exports.createPostPostController = async (req, res, next) => {
 			keywords,
 			group: hasBlogs._id,
 			thumbnail: file ? `/uploads/${file.filename}` : '',
+			groupThumbnail: hasBlogs.thumbnail || '',
+			readTime: readTime(content).text,
+			lang,
 		})
 		const createdPost = await createPost.save()
 		if (!createdPost) {
@@ -163,6 +194,7 @@ exports.createPostPostController = async (req, res, next) => {
 			}
 			return res.status(500).json({ message: 'Internal server error' })
 		}
+		console.log(createdPost)
 		res.status(201).json({ message: 'Successfully creared post', post: createdPost })
 	} catch (e) {
 		next(e)
@@ -173,12 +205,14 @@ exports.createPostPostController = async (req, res, next) => {
 exports.updatePostPutController = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		const { title, content, keywords } = req.body
+		const { title, content, keywords, lang, group } = req.body
 		const file = req.file
 		const errors = {
 			...validator(title, null, null, 'title'),
 			...validator(content, null, null, 'content'),
+			...validator(lang, null, null, 'lang'),
 		}
+		const hasBlogs = await Blogs.findOne({ _id: group })
 		if (Object.keys(errors).length !== 0) {
 			if (file) {
 				fs.unlink(file.path, error => {
@@ -211,7 +245,11 @@ exports.updatePostPutController = async (req, res, next) => {
 				title: title ? title : hasPost.title,
 				content: content ? content : hasPost.content,
 				thumbnail: file ? `/uploads/${file.filename}` : hasPost.thumbnail,
+				groupThumbnail: hasBlogs ? hasBlogs.thumbnail : hasPost.groupThumbnail,
 				keywords: keywords ? keywords : hasPost.keywords,
+				readTime: content ? readTime(content).text : hasPost.readTime,
+				lang: lang ? lang : hasPost.lang,
+				group: group ? group : hasPost.group,
 			},
 			{ new: true }
 		)

@@ -19,6 +19,7 @@ import {
 	PieChart as PieChartIcon,
 	// AddCircleOutline as AddCircleOutlineIcon,
 	NoteAdd as NoteAddIcon,
+	PostAdd as PostAddIcon,
 } from '@material-ui/icons'
 
 import useStyle from './style'
@@ -49,7 +50,7 @@ const dataLinks = [
 	},
 	{
 		name: 'Blog Creation',
-		icon: BorderColorIcon,
+		icon: PostAddIcon,
 		url: '/blogs/creation',
 	},
 	{

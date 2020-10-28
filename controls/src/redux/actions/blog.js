@@ -95,22 +95,27 @@ export const handleMenuChange = event => {
 	}
 }
 
-export const createBlogHandleChange = event => {
+export const createBlogHandleChange = (event, isFile) => {
 	// console.log('This is a value', event.target.files)
-	if (!event.target) {
+	if (isFile) {
 		event.target = {
-			name: 'content',
-			// value: event.editor.getData(),
-			value: JSON.stringify(event),
+			name: 'file',
+			value: event[0],
 		}
 	} else {
-		event.persist()
-		if (event.target.files) {
+		if (!event.target) {
 			event.target = {
-				name: 'file',
-				value: event.target.files[0],
+				name: 'content',
+				value: JSON.stringify(event),
 			}
-			console.log(event.target.value)
+		} else {
+			if (!event.target.name) {
+				event.target = {
+					name: 'lang',
+					value: event.target.value,
+				}
+			}
+			event.persist()
 		}
 	}
 
@@ -127,16 +132,16 @@ export const createBlogHandleSubmit = event => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const { createBlog, selectedGroup } = state.blog
-		const { title, keywords, content, file } = createBlog
+		const { title, keywords, content, file, lang } = createBlog
 
 		dispatch({
 			type: HANDLE_LOADER,
 		})
 
-		if (!title || !content) {
+		if (!title || !content || !lang) {
 			dispatch({
 				type: BLOGS_HANDLE_ERROR,
-				payload: 'Title and content required',
+				payload: 'Title & content & lang is required',
 			})
 			return false
 		}
@@ -144,6 +149,7 @@ export const createBlogHandleSubmit = event => {
 		data.append('title', title)
 		data.append('keywords', keywords)
 		data.append('content', content)
+		data.append('lang', lang)
 		data.append('thumbnail', file)
 		try {
 			const res = await axios.post(`${process.env.REACT_APP_URI_BLOGS_POST_CREATE}/${selectedGroup}`, data, {
@@ -166,12 +172,25 @@ export const createBlogHandleSubmit = event => {
 		}
 	}
 }
-export const handleGroupNameChange = event => {
-	event.persist()
+export const handleGroupNameChange = e => {
+	let payload
+	if (e.target) {
+		e.persist()
+		payload = {
+			name: 'groupname',
+			value: e.target.value,
+		}
+	} else {
+		payload = {
+			name: 'thumbnail',
+			value: e[0],
+		}
+	}
+
 	return dispatch => {
 		dispatch({
 			type: BLOGS_GROUP_NAME_HANDLE_CHANGE,
-			payload: event.target.value,
+			payload,
 		})
 	}
 }
@@ -182,7 +201,9 @@ export const handleGroupNameSubmit = event => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 
-		const { groupname } = state.blog
+		const {
+			blogCreation: { groupname, thumbnail },
+		} = state.blog
 		dispatch({
 			type: BLOGS_GROUP_NAME_HANDLE_SUBMIT,
 		})
@@ -194,18 +215,16 @@ export const handleGroupNameSubmit = event => {
 			return false
 		}
 		try {
-			const res = await axios.post(
-				process.env.REACT_APP_URI_BLOGS_CREATE,
-				{
-					title: groupname,
+			const data = new FormData()
+			data.append('title', groupname)
+			data.append('thumbnail', thumbnail)
+
+			const res = await axios.post(process.env.REACT_APP_URI_BLOGS_CREATE, data, {
+				headers: {
+					'x-api-key': process.env.REACT_APP_API_KEY,
+					'x-auth-token': state.app.accessToken,
 				},
-				{
-					headers: {
-						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
-					},
-				}
-			)
+			})
 			dispatch({
 				type: BLOGS_GROUP_CREATE_SUCCESS,
 				payload: res.data,
@@ -230,11 +249,24 @@ export const handleClickUpdateGroup = item => {
 }
 
 export const handleChangeUpdateGroup = event => {
-	event.persist()
+	let payload
+	if (event.target) {
+		event.persist()
+		payload = {
+			name: 'title',
+			value: event.target.value,
+		}
+	} else {
+		payload = {
+			name: 'thumbnail',
+			value: event[0],
+		}
+	}
+
 	return dispatch => {
 		dispatch({
 			type: BLOGS_GROUP_UPDATE_HANDLE_CHANGE,
-			payload: event.target.value,
+			payload: payload,
 		})
 	}
 }
@@ -251,24 +283,26 @@ export const handleSubmitUpdateGroup = event => {
 		try {
 			const { app, blog } = selector(state => state)
 
-			let group = blog.group
+			let { group, updateGroup } = blog
 
-			const res = await axios.put(
-				`${process.env.REACT_APP_URI_BLOGS_UPDATE}/${blog.updateGroup._id}`,
-				{ title: blog.updateGroup.title },
-				{
-					headers: {
-						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': app.accessToken,
-					},
-				}
-			)
+			const data = new FormData()
+			data.append('title', updateGroup.title)
+			data.append('thumbnail', updateGroup.thumbnail)
+
+			const res = await axios.put(`${process.env.REACT_APP_URI_BLOGS_UPDATE}/${updateGroup._id}`, data, {
+				headers: {
+					'x-api-key': process.env.REACT_APP_API_KEY,
+					'x-auth-token': app.accessToken,
+				},
+			})
 			group.forEach(g => {
-				if (g._id === blog.updateGroup._id) {
-					g.title = blog.updateGroup.title
+				if (g._id === res.data.group._id) {
+					g.title = res.data.group.title
+					g.thumbnail = res.data.group.thumbnail
 					return false
 				}
 			})
+			console.log(group)
 			dispatch({
 				type: BLOGS_GROUP_UPDATE_HANDLE_SUBMIT,
 				payload: {
@@ -377,18 +411,27 @@ export const selectedPostUpdateModal = post => {
 		})
 	}
 }
-export const postUpdateHandleChange = event => {
-	if (!event.target) {
+export const postUpdateHandleChange = (event, isFile) => {
+	if (isFile) {
 		event.target = {
-			name: 'content',
-			value: JSON.stringify(event),
+			name: 'thumbnail',
+			value: event[0],
 		}
 	} else {
-		event.persist()
-		if (event.target.files) {
+		if (!event.target) {
 			event.target = {
-				name: 'file',
-				value: event.target.files[0],
+				name: 'content',
+				value: JSON.stringify(event),
+			}
+		} else {
+			if (!event.target.name) {
+				event.target = {
+					name: 'lang',
+					value: event.target.value,
+				}
+			}
+			if (event.persist) {
+				event.persist()
 			}
 		}
 	}
@@ -415,7 +458,9 @@ export const handleUpdateBlogsPost = event => {
 			data.append('title', updatePost.title)
 			data.append('content', updatePost.content)
 			data.append('keywords', updatePost.keywords)
-			data.append('thumbnail', updatePost.file)
+			data.append('lang', updatePost.lang)
+			data.append('group', updatePost.group)
+			data.append('thumbnail', updatePost.thumbnail)
 			const res = await axios.put(`${process.env.REACT_APP_URI_BLOGS_POST_UPDATE}/${updatePost._id}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
@@ -430,6 +475,8 @@ export const handleUpdateBlogsPost = event => {
 					post.content = res.data.post.content
 					post.keywords = res.data.post.keywords
 					post.thumbnail = res.data.post.thumbnail
+					post.lang = res.data.post.lang
+					post.group = res.data.post.group
 					return false
 				}
 			})

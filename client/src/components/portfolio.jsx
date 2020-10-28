@@ -25,6 +25,7 @@ import { Visibility as VisibilityIcon, Refresh as RefreshIcon } from '@material-
 import { Pagination, Skeleton, Alert } from '@material-ui/lab'
 
 import { Title, Search } from '../common'
+import SEO from '../common/seo'
 import CustomizedDialogs from './previewModal'
 // Imported Actions
 import {
@@ -65,7 +66,7 @@ const GroupListBar = () => {
 	const dispatch = useDispatch()
 	return (
 		<div className={classes.root}>
-			{!isLoading && groups.length!==0 ? (
+			{!isLoading && groups.length !== 0 ? (
 				<AppBar position="static" color="default">
 					<Tabs
 						value={correntTab}
@@ -81,8 +82,8 @@ const GroupListBar = () => {
 						))}
 					</Tabs>
 				</AppBar>
-			) : groups.length!==0 && (
-				<Skeleton variant="rect" height={40} />
+			) : (
+				groups.length !== 0 && <Skeleton variant="rect" height={40} />
 			)}
 		</div>
 	)
@@ -179,7 +180,7 @@ const SearchItems = () => {
 	}
 }
 
-const Portfolio = () => {
+export const Portfolio = () => {
 	const state = useSelector(state => state.portfolio)
 	const { isLoading, error, projects, groupId, avoidPage, exactPage, itemPerPage, searchTerms } = state
 	let projectLists = projects.filter(p => p.group.toString() === groupId.toString())
@@ -246,4 +247,9 @@ const Portfolio = () => {
 	)
 }
 
-export default Portfolio
+export default () => (
+	<>
+		<SEO title="Portfolio" content="portfolio of md minhaj,portfolio of muhammad minhaj" link="https://mdminhaj.com/portfolio" />
+		<Portfolio />
+	</>
+)

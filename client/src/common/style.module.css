@@ -30,17 +30,19 @@
 }
 
 /* --------------------- Styled Of Header Components ---------------------- */
-.navContainer {
+/* .navContainer {
 	padding: 10px 0px 10px 0px;
 	box-shadow: 0pt 1pt 3pt 1pt #00000035;
 	position: fixed;
-	/* background: white; */
 	background: #364253;
 	top: 0px;
 	display: block;
 	width: 100%;
 	z-index: 1300;
 	transition: top 0.25s;
+} */
+.header {
+	background: #364253 !important;
 }
 .brand > h2 {
 	text-align: center;
@@ -78,7 +80,7 @@
 	/* box-shadow: 0pt 0pt 0pt 1pt #ff9800; */
 	/* color: #151617; */
 	color: #ff9800;
-	border-bottom: 1px solid #ff9800;
+	/* border-bottom: 1px solid #ff9800; */
 	/* transform: scale(0.95); */
 }
 .nav > ul > li > a:focus {
@@ -92,6 +94,7 @@
 	border: 1px solid #09090914;
 	border-radius: 10px;
 	padding: 5px;
+	margin-bottom: 0.5rem;
 }
 .navCirculer > span {
 	width: 12px;

@@ -1,110 +1,35 @@
-import {
-	BLOG_HANDLE_DRAWER,
-	BLOG_HANDLE_DRAWER_MOBILE,
-	BLOG_HANDLE_COLLAPSE,
-	BLOG_HANDLE_SELECTED_POST,
-	BLOG_HANDLE_MATCHED_URL_PARAMS,
-	BLOG_HANDLE_SEARCH,
-	BLOG_HANDLE_CLEAR_SEARCH,
-} from '../constants/type'
+import axios from 'axios'
+import { IS_LOADING_OPENED, LOAD_BLOG_DATA_SUCCESS, LOAD_BLOG_DATA_FAILED, SEARCH_BLOG_HANDLE_CHANGE } from '../constants/type'
 
-export const handleDrawer = () => {
-	return dispatch => {
+export const getDataFromServer = () => {
+	return async (dispatch, selector) => {
 		dispatch({
-			type: BLOG_HANDLE_DRAWER,
+			type: IS_LOADING_OPENED,
 		})
-	}
-}
-
-export const handleDrawerMobile = value => {
-	return dispatch => {
-		dispatch({
-			type: BLOG_HANDLE_DRAWER_MOBILE,
-			payload: value,
-		})
-	}
-}
-
-export const handleCollapse = index => {
-	return dispatch => {
-		dispatch({
-			type: BLOG_HANDLE_COLLAPSE,
-			payload: index,
-		})
-	}
-}
-
-// Handle Selected Post To Get Index For Showing Circle With List
-export const handleSelectedPost = index => {
-	return dispatch => {
-		dispatch({
-			type: BLOG_HANDLE_SELECTED_POST,
-			payload: index,
-		})
-	}
-}
-
-// Showing Content Form URL Parameters
-export const handleSearchQuery = (groupid, postid) => {
-	return (dispatch, selector) => {
-		const { contents } = selector(state => state).blog
-
-		let hasPost
-		let collapseIndex
-		let selectedPost
-
-		contents.forEach((group, indexOne) => {
-			if (group.title.toLowerCase() === groupid.toLowerCase()) {
-				collapseIndex = indexOne
-
-				group.posts.forEach((post, indexTow) => {
-					if (post.title.toLowerCase() === postid.toLowerCase()) {
-						selectedPost = indexTow
-						hasPost = post
-						return false
-					}
-				})
-
-				return false
-			}
-		})
-		if (hasPost) {
-			dispatch({
-				type: BLOG_HANDLE_MATCHED_URL_PARAMS,
-				payload: {
-					post: hasPost,
-					collapseIndex,
-					selectedPost,
+		try {
+			const res = await axios.get(process.env.REACT_APP_URI_GET_DATA_BLOGS, {
+				headers: {
+					'x-api-key': process.env.REACT_APP_API_KEY,
 				},
 			})
-		} else {
 			dispatch({
-				type: BLOG_HANDLE_MATCHED_URL_PARAMS,
-				payload: {
-					post: null,
-					collapseIndex: 0,
-					selectedPost: null,
-				},
+				type: LOAD_BLOG_DATA_SUCCESS,
+				payload: res.data,
+			})
+		} catch (e) {
+			dispatch({
+				type: LOAD_BLOG_DATA_FAILED,
+				payload: e.message,
 			})
 		}
 	}
 }
 
-// Searching Blogs
-export const handleSearch = query => {
+export const handleChangeSearch = value => {
 	return dispatch => {
 		dispatch({
-			type: BLOG_HANDLE_SEARCH,
-			payload: query,
-		})
-	}
-}
-
-// Clear Search For Updated State To Load New Page
-export const handleClearSearch = () => {
-	return dispatch => {
-		dispatch({
-			type: BLOG_HANDLE_CLEAR_SEARCH,
+			type: SEARCH_BLOG_HANDLE_CHANGE,
+			payload: value,
 		})
 	}
 }

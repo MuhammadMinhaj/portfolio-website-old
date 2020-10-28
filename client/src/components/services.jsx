@@ -17,7 +17,7 @@ import PublicIcon from '@material-ui/icons/Public'
 
 // Imported Common Components
 import { Title } from '../common'
-
+import SEO from '../common/seo'
 import styled from './style.module.css'
 
 const useStyles = makeStyles(theme => ({
@@ -62,7 +62,7 @@ const ItemOfTimeLine = ({ stepNumber, IconName, iconColor, iconVariant, title, m
 	)
 }
 
-const Services = () => {
+export const Services = () => {
 	const classes = useStyles()
 
 	const services = [
@@ -143,4 +143,10 @@ const Services = () => {
 		</Container>
 	)
 }
-export default Services
+
+export default () => (
+	<>
+		<SEO title="My Services" content="services of md minhaj,services of muhammad minhaj" link="https://mdminhaj.com/services" />
+		<Services />
+	</>
+)

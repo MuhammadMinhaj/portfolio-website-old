@@ -21,6 +21,7 @@ import {
 	FormControlLabel,
 	Switch,
 	Button,
+	Avatar,
 } from '@material-ui/core'
 
 import { Delete as DeleteIcon, FilterList as FilterListIcon } from '@material-ui/icons'
@@ -272,7 +273,19 @@ export default function EnhancedTable({ rows, headCells, control }) {
 											<TableCell padding="checkbox">
 												<Checkbox checked={isItemSelected} inputProps={{ 'aria-labelledby': labelId }} />
 											</TableCell>
-											{Object.entries(row).map((r, i) => r[0] !== '_id' && r[0] !== '__v' && <TableCell key={i}>{r[1]}</TableCell>)}
+											{Object.entries(row).map(
+												(r, i) =>
+													r[0] !== '_id' &&
+													r[0] !== '__v' && (
+														<TableCell key={i}>
+															{r[0] === 'thumbnail' ? (
+																<Avatar alt="Remy Sharp" src={r[1]} variant="rounded" style={{ width: '150px', height: '100px' }} />
+															) : (
+																r[1]
+															)}
+														</TableCell>
+													)
+											)}
 
 											<TableCell align="right">
 												<div style={{ display: 'flex', justifyContent: 'space-between' }}>{control && control(row)}</div>

@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-
+const { CustomDate } = require('../utils')
 const initValues = required => ({
 	type: String,
 	trim: true,
@@ -10,15 +10,6 @@ const groupSchema = new Schema({
 	title: initValues(true),
 })
 exports.PortfolioGroup = new model('PortfolioGroup', groupSchema)
-
-const CustomDate = () => {
-	let today = new Date()
-	let dd = String(today.getDate()).padStart(2, '0')
-	let mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
-	let yyyy = today.getFullYear()
-	today = dd + '/' + mm + '/' + yyyy
-	return today
-}
 
 const schema = new Schema({
 	title: initValues(true),
@@ -31,7 +22,7 @@ const schema = new Schema({
 	time: initValues(),
 	createdAt: {
 		type: String,
-		default: CustomDate(),
+		default: new Date().toLocaleDateString(),
 	},
 	images: [
 		{

@@ -1,6 +1,6 @@
 import React from 'react'
+import SEO from '../common/seo'
 import { Button, Container, Grow, Typography } from '@material-ui/core'
-import Confetti from 'react-confetti'
 import styled from './style.module.css'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 
@@ -8,19 +8,17 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import { Typer, SocialIcons } from '../common'
 
 // Imported Components
-import About from './about'
-import Skills from './skills'
-import Contact from './contact'
-import Portfolio from './portfolio'
-import Services from './services'
-// Import All Actions
-import { drawShape } from '../redux/actions'
+import { About } from './about'
+import { Skills } from './skills'
+import { Contact } from './contact'
+import { Portfolio } from './portfolio'
+import { Services } from './services'
+
 
 const Slider = () => {
 	return (
 		<>
 			<div className={styled.sliderContainer}>
-				<Confetti height="450px" initialVelocityX={15} opacity={0.6} drawShape={drawShape} />
 				<Container>
 					<div className={styled.container}>
 						<Grow in>
@@ -44,25 +42,32 @@ const Slider = () => {
 					</div>
 				</Container>
 			</div>
-			{/* About Component */}
-			<About />
-			{/* Skills Component */}
-			<Skills />
-			{/* Portfolio Component */}
-			<Portfolio />
-			{/* Services Component */}
-			<Services />
-			{/* Contact Component */}
-			<Contact />
 		</>
 	)
 }
 
 const Home = () => {
 	return (
-		<main>
-			<Slider />
-		</main>
+		<>
+			<SEO
+				title="Muhammad Minhaj || Full-Stack Software Developer"
+				content="Muhammad Minhaj,Md Minhaj,Web Developer Md Minhaj,Web Developer Muhammad Minhaj,Software Developer Md Mnhaj"
+				link="http://localhost:3000/"
+			/>
+			<main>
+				<Slider />
+				{/* About Component */}
+				<About />
+				{/* Skills Component */}
+				<Skills />
+				{/* Portfolio Component */}
+				<Portfolio />
+				{/* Services Component */}
+				<Services />
+				{/* Contact Component */}
+				<Contact />
+			</main>
+		</>
 	)
 }
 

@@ -166,7 +166,7 @@ const socialLists = [
 export const SocialIcons = () => (
 	<div>
 		{socialLists.map((social, i) => (
-			<IconButton key={i} href={social.href}>
+			<IconButton key={i} href={social.href} target="blank">
 				{social.icon}
 			</IconButton>
 		))}

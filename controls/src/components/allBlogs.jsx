@@ -18,9 +18,14 @@ import {
 	TextField,
 	Collapse,
 	Switch,
+	Select,
+	MenuItem,
+	InputLabel,
 } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
+import { DropzoneArea } from 'material-ui-dropzone'
+
 import {
 	handleChangeGroupIndex,
 	handleTabSelectedGroupId,
@@ -32,7 +37,7 @@ import {
 	alertHandleClose,
 	handleDeleteBlogsPost,
 } from '../redux/actions/blog'
-import { Loader, CustomModal, CustomAlert, ConfimDialog, CustomFileUploadUI } from '../common'
+import { Loader, CustomModal, CustomAlert, ConfimDialog, CustomSelectionItem } from '../common'
 import ReactEditor from '../common/react-editor'
 import styled from './style.module.css'
 
@@ -64,10 +69,12 @@ const CustomTab = () => {
 }
 
 const BlogItem = ({ post, handleClick }) => {
+	const state = useSelector(state => state.blog)
 	const dispatch = useDispatch()
 	const [open, setOpen] = useState(false)
 	const [error, setError] = useState('')
 	const [text, setText] = useState('')
+	const [thumbnail, setThumbnail] = useState('')
 	const handleToggle = () => {
 		setOpen(!open)
 	}
@@ -82,7 +89,13 @@ const BlogItem = ({ post, handleClick }) => {
 			setError('Failed To Confirmation Latter')
 		}
 	}
-
+	useEffect(() => {
+		state.group.forEach(g => {
+			if (g._id.toString() === state.selectedTabGroupId.toString()) {
+				setThumbnail(g.thumbnail)
+			}
+		})
+	}, [state.group, state.selectedTabGroupId])
 	return (
 		<Grid item sm={4}>
 			<Card raised>
@@ -96,7 +109,7 @@ const BlogItem = ({ post, handleClick }) => {
 					clearError={() => setError('')}
 				/>
 				<CardActionArea onClick={() => dispatch(handleClick(post))}>
-					<CardMedia component="img" alt="Contemplative Reptile" height="140" image={post.thumbnail} title="Contemplative Reptile" />
+					<CardMedia component="img" alt="Contemplative Reptile" height="140" image={post.thumbnail || thumbnail} title="Contemplative Reptile" />
 					<CardContent>
 						<Typography gutterBottom variant="h5" component="h2">
 							{post.title}
@@ -150,38 +163,19 @@ const EditForm = () => {
 								multiline
 								onChange={e => dispatch(postUpdateHandleChange(e))}
 								fullWidth
-								rows={10}
+								rows={11}
 							/>
 						</Grid>
 						<Grid item sm={6}>
-							<Card variant="outlined">
-								<div
-									style={{
-										padding: '0.25rem',
-										height: '225px',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-										color: ' #3f51b599',
-									}}
-								>
-									{state.updatePost.thumbnail || state.updatePost.file ? (
-										<img
-											src={state.updatePost.file ? URL.createObjectURL(state.updatePost.file) : state.updatePost.thumbnail}
-											alt="Images"
-											width="100%"
-											height="100%"
-										/>
-									) : (
-										<h1>Thumbnail</h1>
-									)}
-								</div>
-							</Card>
+							<DropzoneArea
+								acceptedFiles={['image/*']}
+								dropzoneText={'Drag and drop an image here or click'}
+								onChange={e => dispatch(postUpdateHandleChange(e, true))}
+								filesLimit={1}
+								initialFiles={[state.updatePost.thumbnail]}
+							/>
 						</Grid>
 					</Grid>
-				</FormControl>
-				<FormControl margin="dense" fullWidth>
-					<CustomFileUploadUI handleChange={e => dispatch(postUpdateHandleChange(e))} file={state.updatePost.file} />
 				</FormControl>
 			</Collapse>
 
@@ -191,6 +185,34 @@ const EditForm = () => {
 					handleChange={(api, newData) => dispatch(postUpdateHandleChange(newData))}
 				/>
 			</FormControl>
+
+			<Grid container spacing={3}>
+				<Grid item sm={6}>
+					<FormControl margin="dense" fullWidth>
+						<CustomSelectionItem
+							handleChange={e => dispatch(postUpdateHandleChange({ target: { name: 'group', value: e.target.value } }))}
+							value={state.updatePost.group}
+							lists={state.group}
+						/>
+					</FormControl>
+				</Grid>
+				<Grid item sm={6}>
+					<FormControl margin="dense" fullWidth>
+						<InputLabel id="update-language-selection-list">Select Language</InputLabel>
+
+						<Select
+							value={state.updatePost.lang}
+							label="Select Language"
+							labelId="update-language-selection-list"
+							id="demo-controlled-open-select"
+							onChange={e => dispatch(postUpdateHandleChange(e))}
+						>
+							<MenuItem value="en">English</MenuItem>
+							<MenuItem value="bn">Bangla</MenuItem>
+						</Select>
+					</FormControl>
+				</Grid>
+			</Grid>
 		</>
 	)
 }

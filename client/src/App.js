@@ -5,7 +5,7 @@ import { ProgressBar } from 'scrolling-based-progressbar'
 
 import store from './redux/store/store'
 import Routes from './routes'
-import Header from './common/header'
+// import Header from './common/header'
 import Footer from './common/footer'
 
 const App = () => {
@@ -13,10 +13,12 @@ const App = () => {
 		<>
 			<Provider store={store}>
 				<Router>
+					{/* <ProgressBar height="4px" color="#f50057" bgColor="#607d8b42" /> */}
 					<div>
-						<ProgressBar height="4px" color="#f50057" bgColor="#607d8b42" />
+						<ProgressBar height="2px" color="#4353ff" bgColor="#607d8b42" />
 					</div>
-					<Header />
+
+					{/* <Header /> */}
 					<Routes />
 					<Footer />
 				</Router>

@@ -20,7 +20,6 @@ const initalState = {
 	avoidPage: 0,
 	searchTerms: '',
 	groupId: null,
-
 	groups: [],
 	projects: [],
 }

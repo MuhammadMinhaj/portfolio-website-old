@@ -3,10 +3,11 @@ import { Container, Grow, Typography } from '@material-ui/core'
 import styled from './style.module.css'
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
 import { Title } from '../common'
+import SEO from '../common/seo'
 
-const About = () => {
+export const About = ({ handleSeo }) => {
 	return (
-		<div>
+		<>
 			<Container>
 				<Title title="About" subTitle="Me!" />
 				<div className={styled.aboutContainer}>
@@ -42,8 +43,13 @@ const About = () => {
 					</div>
 				</div>
 			</Container>
-		</div>
+		</>
 	)
 }
 
-export default About
+export default () => (
+	<>
+		<SEO title="About Me" content="about of md minhaj,about of muhammad minhaj" link="https://mdminhaj.com/about" />
+		<About />
+	</>
+)

@@ -28,7 +28,7 @@ import {
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import { Alert } from '@material-ui/lab'
 import { PulseLoader, ScaleLoader } from 'react-spinners'
-
+import { DropzoneArea } from 'material-ui-dropzone'
 import {
 	Close as CloseIcon,
 	Update as UpdateIcon,
@@ -231,14 +231,6 @@ export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSub
 		</div>
 	)
 }
-export const CustomFileUploadUI = ({ handleChange, file }) => {
-	return (
-		<div className={styled.fileUploaderUI}>
-			<h2>{file ? file.name : 'Choose File'}</h2>
-			<input type="file" onChange={handleChange} name="file" />
-		</div>
-	)
-}
 
 // Custom Tab Pannel
 export const CustomTabs = ({ index, handleChange, tabNames }) => {
@@ -253,13 +245,25 @@ export const CustomTabs = ({ index, handleChange, tabNames }) => {
 	)
 }
 
-export const CustomInlineForm = ({ value, handleChange, handleSubmit }) => {
+export const CustomInlineForm = ({ value, file, handleChange, handleSubmit, hasFile }) => {
 	return (
 		<Paper square variant="outlined" className={styled.padding} style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
 			<form onSubmit={handleSubmit}>
 				<FormControl margin="dense" fullWidth>
 					<TextField label="Group Name" value={value} onChange={handleChange} name="name" />
 				</FormControl>
+				{hasFile && (
+					<FormControl margin="dense" fullWidth>
+						<DropzoneArea
+							acceptedFiles={['image/*']}
+							dropzoneText={'Drag and drop an image here or click'}
+							onChange={handleChange}
+							filesLimit={1}
+							initialFiles={[file]}
+						/>
+					</FormControl>
+				)}
+
 				<FormControl margin="dense">
 					<Button type="submit" color="primary" variant="contained" startIcon={<NoteAddIcon />}>
 						Create

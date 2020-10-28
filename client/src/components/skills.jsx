@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button'
 import { Title } from '../common'
 import { Container, Grow, Modal, IconButton } from '@material-ui/core'
 import StepButton from '@material-ui/core/StepButton'
-
+import SEO from '../common/seo'
 // Imported Icons
 import AppsIcon from '@material-ui/icons/Apps'
 import WebIcon from '@material-ui/icons/Web'
@@ -20,6 +20,7 @@ import LanguageIcon from '@material-ui/icons/Language'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import CloseIcon from '@material-ui/icons/Close'
+
 import styled from './style.module.css'
 
 // Imported Actions
@@ -154,7 +155,7 @@ const SkillsItem = () => {
 	)
 }
 
-const Skills = () => {
+export const Skills = () => {
 	const {
 		skills: { activeStep, steps },
 	} = useSelector(state => state.web)
@@ -203,4 +204,9 @@ const Skills = () => {
 	)
 }
 
-export default Skills
+export default () => (
+	<>
+		<SEO title="My Skill" content="skill of md minhaj,skill of muhammad minhaj" link="https://mdminhaj.com/skill" />
+		<Skills />
+	</>
+)

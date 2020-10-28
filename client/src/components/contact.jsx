@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, Grid, TextField, Button, useMediaQuery } from '@material-ui/core'
 import { Title } from '../common'
+import SEO from '../common/seo'
 import styled from './style.module.css'
 
 import {
@@ -28,7 +29,7 @@ const Item = props => (
 	</div>
 )
 
-const Contact = () => {
+export const Contact = () => {
 	const isMatchedWidth = useMediaQuery('(min-width:576px)')
 	const contactLists = [
 		{
@@ -83,4 +84,9 @@ const Contact = () => {
 	)
 }
 
-export default Contact
+export default () => (
+	<>
+		<SEO title="Contact Me" content="contact with md minhaj,contact info of muhammad minhaj" link="https://mdminhaj.com/contact" />
+		<Contact />
+	</>
+)

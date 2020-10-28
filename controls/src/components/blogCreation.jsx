@@ -12,16 +12,18 @@ import {
 	Switch,
 	FormControlLabel,
 	Button,
-	Card,
 	CircularProgress,
 	IconButton,
+	Select,
+	MenuItem,
+	InputLabel,
 } from '@material-ui/core'
 import { Send as SendIcon, Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
-
+import { DropzoneArea } from 'material-ui-dropzone'
 import styled from './style.module.css'
 
 // Imported Common Components
-import { CustomTabs, CustomInlineForm, CustomSelectionItem, CustomFileUploadUI, Loader, CustomAlert, CustomModal, ConfimDialog } from '../common'
+import { CustomTabs, CustomInlineForm, CustomSelectionItem, Loader, CustomAlert, CustomModal, ConfimDialog } from '../common'
 import CustomTable from '../common/table'
 import ReactEditor from '../common/react-editor'
 // Imported All Actions
@@ -48,7 +50,7 @@ const BlogCreation = () => {
 		isSeo,
 		group,
 		selectedGroup,
-		createBlog: { title, keywords, content, file },
+		createBlog: { title, keywords, content, file, lang },
 	} = state
 	return (
 		<>
@@ -67,13 +69,14 @@ const BlogCreation = () => {
 								<FormControl fullWidth margin="dense">
 									<TextField variant="outlined" label="Title" value={title} name="title" onChange={e => dispatch(createBlogHandleChange(e))} />
 								</FormControl>
+
 								<FormControl fullWidth margin="dense">
 									<Grid container spacing={2}>
 										<Grid item sm={6}>
 											<TextField
 												variant="outlined"
 												label="Keyword"
-												rows={10}
+												rows={11}
 												multiline
 												value={keywords}
 												name="keywords"
@@ -82,35 +85,45 @@ const BlogCreation = () => {
 											/>
 										</Grid>
 										<Grid item sm={6}>
-											<Card variant="outlined">
-												<div
-													style={{
-														padding: '0.25rem',
-														height: '225px',
-														display: 'flex',
-														justifyContent: 'center',
-														alignItems: 'center',
-														color: ' #3f51b599',
-													}}
-												>
-													{file ? <img src={URL.createObjectURL(file)} alt="Images" width="100%" height="100%" /> : <h1>Thumbnail</h1>}
-												</div>
-											</Card>
+											<DropzoneArea
+												acceptedFiles={['image/*']}
+												dropzoneText={'Drag and drop an image here or click'}
+												onChange={e => dispatch(createBlogHandleChange(e, true))}
+												filesLimit={1}
+												initialFiles={[file]}
+											/>
 										</Grid>
 									</Grid>
 								</FormControl>
-
-								<FormControl fullWidth margin="dense">
-									<CustomFileUploadUI handleChange={e => dispatch(createBlogHandleChange(e))} file={file} />
-								</FormControl>
 							</Collapse>
 							<FormControl fullWidth margin="dense">
-								<ReactEditor data={content} handleChange={(api, data) => dispatch(createBlogHandleChange(data))} />
+								<ReactEditor data={content && JSON.parse(content)} handleChange={(api, data) => dispatch(createBlogHandleChange(data))} />
 							</FormControl>
 							{/* Selection Item */}
-							<FormControl margin="dense" fullWidth>
-								<CustomSelectionItem handleChange={e => dispatch(handleMenuChange(e))} value={selectedGroup} lists={group} />
-							</FormControl>
+
+							<Grid container spacing={3}>
+								<Grid item sm={6}>
+									<FormControl margin="dense" fullWidth>
+										<CustomSelectionItem handleChange={e => dispatch(handleMenuChange(e))} value={selectedGroup} lists={group} />
+									</FormControl>
+								</Grid>
+								<Grid item sm={6}>
+									<FormControl margin="dense" fullWidth>
+										<InputLabel id="language-selection-list">Select Language</InputLabel>
+
+										<Select
+											value={lang}
+											onChange={e => dispatch(createBlogHandleChange(e))}
+											label="Select Language"
+											labelId="language-selection-list"
+											id="demo-controlled-open-select"
+										>
+											<MenuItem value="en">English</MenuItem>
+											<MenuItem value="bn">Bangla</MenuItem>
+										</Select>
+									</FormControl>
+								</Grid>
+							</Grid>
 
 							<FormControl margin="dense">
 								<Button color="primary" variant="contained" startIcon={<SendIcon />} type="submit">
@@ -133,7 +146,12 @@ const BlogCreation = () => {
 const CreateGroup = () => {
 	const dispatch = useDispatch()
 	const state = useSelector(state => state.blog)
-	const { groupname, group, updateGroup, isUpdateLoading } = state
+	const {
+		blogCreation: { groupname, thumbnail },
+		group,
+		updateGroup,
+		isUpdateLoading,
+	} = state
 
 	const [open, setOpen] = useState(false)
 	const [settings, setSettings] = useState({
@@ -187,6 +205,8 @@ const CreateGroup = () => {
 		<>
 			<CustomInlineForm
 				value={groupname}
+				file={thumbnail}
+				hasFile={true}
 				handleChange={e => dispatch(handleGroupNameChange(e))}
 				handleSubmit={e => dispatch(handleGroupNameSubmit(e))}
 			/>
@@ -206,12 +226,25 @@ const CreateGroup = () => {
 					open={open}
 					handleClick={() => handleClick()}
 					bodyComponent={() => (
-						<TextField
-							variant="outlined"
-							value={updateGroup ? updateGroup.title : ''}
-							onChange={e => dispatch(handleChangeUpdateGroup(e))}
-							fullWidth
-						/>
+						<>
+							<TextField
+								variant="outlined"
+								value={updateGroup ? updateGroup.title : ''}
+								onChange={e => dispatch(handleChangeUpdateGroup(e))}
+								fullWidth
+							/>
+							{updateGroup && (
+								<FormControl margin="dense" fullWidth>
+									<DropzoneArea
+										acceptedFiles={['image/*']}
+										dropzoneText={'Drag and drop an image here or click'}
+										onChange={file => dispatch(handleChangeUpdateGroup(file))}
+										filesLimit={1}
+										initialFiles={[updateGroup.thumbnail]}
+									/>
+								</FormControl>
+							)}
+						</>
 					)}
 					width="sm"
 					handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
@@ -220,7 +253,10 @@ const CreateGroup = () => {
 
 				<CustomTable
 					rows={group}
-					headCells={[{ id: 'name', numeric: false, disablePadding: false, label: 'Group' }]}
+					headCells={[
+						{ id: 'name', numeric: false, disablePadding: false, label: 'Group' },
+						{ numeric: false, disablePadding: false, label: 'Thumbnail' },
+					]}
 					control={item => (
 						<>
 							<IconButton color="primary" onClick={() => handleClick(item)}>

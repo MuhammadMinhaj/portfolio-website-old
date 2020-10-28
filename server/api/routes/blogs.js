@@ -6,6 +6,7 @@ const upload = require('../middlewares/upload')
 
 // Require controllers
 const {
+	getPublicDataGetController,
 	getBlogsGroupGetController,
 	createBlogsPostController,
 	updateBlogsPutController,
@@ -16,10 +17,11 @@ const {
 	deletePostDeleteController,
 } = require('../controllers/blogs')
 
+router.get('/data', isValidApiKey(), getPublicDataGetController)
 router.get('/', isValidApiKey(), isAuthenticated(), getBlogsGroupGetController)
 router.get('/posts', isValidApiKey(), isAuthenticated(), getAllBlogsPostsGetController)
-router.post('/create', isValidApiKey(), isAuthenticated(), createBlogsPostController)
-router.put('/update/:id', isValidApiKey(), isAuthenticated(), updateBlogsPutController)
+router.post('/create', isValidApiKey(), isAuthenticated(), upload.single('thumbnail'), createBlogsPostController)
+router.put('/update/:id', isValidApiKey(), isAuthenticated(), upload.single('thumbnail'), updateBlogsPutController)
 router.delete('/delete/:id', isValidApiKey(), isAuthenticated(), deleteBlogsDeleteController)
 router.post('/post/create/:id', isValidApiKey(), isAuthenticated(), upload.single('thumbnail'), createPostPostController)
 router.put('/post/update/:id', isValidApiKey(), isAuthenticated(), upload.single('thumbnail'), updatePostPutController)

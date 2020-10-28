@@ -36,6 +36,7 @@ const initValues = {
 	content: null,
 	group: '',
 	file: null,
+	lang: '',
 }
 const initialState = {
 	isLoading: false,
@@ -46,14 +47,16 @@ const initialState = {
 	success: '',
 	tabIndex: 0,
 	groupIndex: 0,
-	groupname: '',
+	blogCreation: {
+		groupname: '',
+		thumbnail: null,
+	},
+
 	createBlog: initValues,
 	selectedGroup: '',
 	selectedTabGroupId: '',
 	updateGroup: {},
-	updatePost: {
-		file: {},
-	},
+	updatePost: {},
 	group: [],
 	posts: [],
 }
@@ -130,7 +133,10 @@ export default (state = initialState, action) => {
 		case BLOGS_GROUP_NAME_HANDLE_CHANGE:
 			state = {
 				...state,
-				groupname: action.payload,
+				blogCreation: {
+					...state.blogCreation,
+					[action.payload.name]: action.payload.value,
+				},
 			}
 			return state
 		case BLOGS_GROUP_NAME_HANDLE_SUBMIT:
@@ -150,7 +156,7 @@ export default (state = initialState, action) => {
 				...state,
 				updateGroup: {
 					...state.updateGroup,
-					title: action.payload,
+					[action.payload.name]: action.payload.value,
 				},
 			}
 			return state
@@ -195,7 +201,11 @@ export default (state = initialState, action) => {
 						...action.payload.blogsGroup,
 					},
 				],
-				groupname: '',
+				blogCreation: {
+					groupname: '',
+					thumbnail: '',
+				},
+
 				isLoading: false,
 				error: '',
 				success: action.payload.message,
@@ -243,7 +253,6 @@ export default (state = initialState, action) => {
 				updatePost: {
 					...state.updatePost,
 					[action.payload.target.name]: action.payload.target.value,
-					file: action.payload.target.name === 'file' && action.payload.target.value,
 				},
 			}
 			return state
