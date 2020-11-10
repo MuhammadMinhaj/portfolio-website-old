@@ -1,9 +1,11 @@
 const authRoutes = require('./auth')
 const portfolioRoutes = require('./portfolio')
 const blogsRoute = require('./blogs')
+const contactRoute = require('./contact')
+
 const routes = [
 	{
-		path: '/api',
+		path: '/api/auth',
 		handle: authRoutes,
 	},
 
@@ -14,6 +16,10 @@ const routes = [
 	{
 		path: '/api/blogs',
 		handle: blogsRoute,
+	},
+	{
+		path: '/api/contact',
+		handle: contactRoute,
 	},
 	{
 		path: '/',

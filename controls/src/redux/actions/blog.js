@@ -97,6 +97,8 @@ export const handleMenuChange = event => {
 
 export const createBlogHandleChange = (event, isFile) => {
 	// console.log('This is a value', event.target.files)
+
+
 	if (isFile) {
 		event.target = {
 			name: 'file',
@@ -118,7 +120,7 @@ export const createBlogHandleChange = (event, isFile) => {
 			event.persist()
 		}
 	}
-
+	
 	return dispatch => {
 		dispatch({
 			type: BLOGS_CREATE_HANDLE_CHANGE,

@@ -11,11 +11,8 @@ import {
 	MoveToInbox as InboxIcon,
 	Dashboard as DashboardIcon,
 	Subscriptions as SubscriptionsIcon,
-	BorderColor as BorderColorIcon,
 	LibraryBooks as LibraryBooksIcon,
 	Settings as SettingsIcon,
-	PersonAdd as PersonAddIcon,
-	Security as SecurityIcon,
 	PieChart as PieChartIcon,
 	// AddCircleOutline as AddCircleOutlineIcon,
 	NoteAdd as NoteAddIcon,
@@ -49,6 +46,11 @@ const dataLinks = [
 		url: '/portfolio',
 	},
 	{
+		name: 'Contact',
+		icon: InboxIcon,
+		url: '/contact',
+	},
+	{
 		name: 'Blog Creation',
 		icon: PostAddIcon,
 		url: '/blogs/creation',
@@ -58,21 +60,7 @@ const dataLinks = [
 		icon: LibraryBooksIcon,
 		url: '/blogs',
 	},
-	{
-		name: 'Mail',
-		icon: InboxIcon,
-		url: '',
-	},
-	{
-		name: 'User Management',
-		icon: PersonAddIcon,
-		url: '/users',
-	},
-	{
-		name: 'Security',
-		icon: SecurityIcon,
-		url: '',
-	},
+
 	{
 		name: 'Setting',
 		icon: SettingsIcon,
@@ -88,12 +76,6 @@ const CustomListItem = ({ Icon, name }) => (
 		<ListItemText primary={name} />
 	</ListItem>
 )
-
-// const CollapseItem = ({ name }) => (
-// 	<ListItem button>
-// 		<ListItemText primary={name} />
-// 	</ListItem>
-// )
 
 export default () => {
 	const classes = useStyle()
@@ -128,7 +110,7 @@ export default () => {
 				{dataLinks.map((list, index) => (
 					<Link to={list.url} className={classes.link} key={index}>
 						<CustomListItem Icon={list.icon} name={list.name} />
-						{index === 5 && <Divider />}
+						{index === 3 && <Divider />}
 					</Link>
 				))}
 			</List>

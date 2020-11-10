@@ -1,6 +1,9 @@
 const fs = require('fs')
 const readTime = require('reading-time')
+const nodemailer = require('nodemailer')
 const { Blogs, Post } = require('../../models/Blogs')
+const { Subscriber } = require('../../models/Model')
+
 // Require validator
 const validator = require('../../utils/validator')
 const { removeFilePathFromFs } = require('../../utils')
@@ -194,7 +197,41 @@ exports.createPostPostController = async (req, res, next) => {
 			}
 			return res.status(500).json({ message: 'Internal server error' })
 		}
-		console.log(createdPost)
+		// Sent Mail To Notify Every subscribers
+		const transporter = await nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.EMAIL,
+				pass: process.env.PASSWORD,
+			},
+		})
+
+		const subscribers = await Subscriber.find()
+
+		// let postTitile = createdPost.title.toLowerCase().replaceAll(' ', '-')
+		subscribers.forEach(async sub => {
+			try {
+				const info = await transporter.sendMail({
+					from: process.env.EMAIL,
+					to: sub.email,
+					subject: createdPost.title,
+					html: `
+					<h4>Assalamu Alaikum!</h4>
+					<h5>News!<h5>
+					<p>Me uploaded new blog post for see the post visi now!</p>
+					<a href="http://mdminhaj.com/blog/${createdPost.title}">${createdPost.title}</a>
+		
+					<br/>
+					Thanks You
+					`,
+				})
+				if (!info.response) {
+					return res.status(500).json({ message: 'Failed to send mail' })
+				}
+			} catch (e) {
+				return next(e)
+			}
+		})
 		res.status(201).json({ message: 'Successfully creared post', post: createdPost })
 	} catch (e) {
 		next(e)
@@ -295,6 +332,116 @@ exports.deletePostDeleteController = async (req, res, next) => {
 			})
 		}
 		res.status(200).json({ message: 'Successfully deleted post', post: deletedPost })
+	} catch (e) {
+		next(e)
+	}
+}
+
+exports.subscriberDataGetController = async (req, res, next) => {
+	try {
+		const subscribers = await Subscriber.find()
+
+		res.status(200).json({ subscribers })
+	} catch (e) {
+		next(e)
+	}
+}
+
+exports.subscribePostPostController = async (req, res, next) => {
+	try {
+		const { email } = req.body
+
+		let error = null
+		if (!email) {
+			error = 'Please provied your email'
+		} else if (!email.includes('@')) {
+			error = 'Invalid email address'
+		}
+		if (error) {
+			return res.status(422).json({
+				message: error,
+			})
+		}
+
+		const isSubscribed = await Subscriber.findOne({ email })
+		if (isSubscribed) {
+			return res.status(200).json({ message: "You're already subscribed the blog" })
+		}
+		const subscribe = new Subscriber({ email })
+
+		const subscribed = await subscribe.save()
+		if (!subscribed) {
+			return res.status(500).json({ message: 'Internal server error' })
+		}
+		res.status(201).json({ message: 'Thanks for subscribe the blog' })
+	} catch (e) {
+		next(e)
+	}
+}
+exports.deleteSubscriberDeleteController = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		const deletedSubscriber = await Subscriber.findOneAndDelete({ _id: id })
+		if (!deletedSubscriber) {
+			return res.status(500).json({ message: 'Internal server error' })
+		}
+		res.status(200).json({ message: 'Successfully delete email', subscriber: deletedSubscriber })
+	} catch (e) {
+		next(e)
+	}
+}
+
+exports.updateSubscriberPutController = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		const { email } = req.body
+		if (!email) {
+			return res.status(422).json({ message: 'Please provied email' })
+		}
+		const updatedSubscriber = await Subscriber.findOneAndUpdate({ _id: id }, { email }, { new: true })
+		if (!updatedSubscriber) {
+			return res.status(500).json({ message: 'Internal server error' })
+		}
+		console.log(updatedSubscriber)
+		res.status(200).json({ message: 'Successfully updated email', subscriber: updatedSubscriber })
+	} catch (e) {
+		next(e)
+	}
+}
+
+// Next works routing and client ui
+exports.mailSenderPostController = async (req, res, next) => {
+	try {
+		const { subject, message } = req.body
+		const transporter = await nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.EMAIL,
+				pass: process.env.PASSWORD,
+			},
+		})
+
+		const subscribers = await Subscriber.find()
+
+		subscribers.forEach(async sub => {
+			try {
+				const info = await transporter.sendMail({
+					from: process.env.EMAIL,
+					to: sub.email,
+					subject,
+					text: message,
+				})
+				if (!info.response) {
+					return res.status(500).json({ message: 'Failed to send mail' })
+				}
+			} catch (e) {
+				return next(e)
+			}
+		})
+
+		res.status(200).json({
+			message: 'Successfully sended mail to everyone',
+		})
 	} catch (e) {
 		next(e)
 	}

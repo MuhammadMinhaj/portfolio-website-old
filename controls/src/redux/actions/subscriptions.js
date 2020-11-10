@@ -1,114 +1,184 @@
+import axios from 'axios'
 import {
-	SUBS_HANDLE_REQ_SORT,
-	SUBS_HANDLE_SELECTED_ALL_CLICK,
-	SUBS_HANDLE_CLICK,
-	SUBS_HANDLE_CHANGE_PAGE,
-	SUBS_HANDLE_CHANGE_ROWS_PER_PAGE,
-	SUBS_HANDLE_CHANGE_DENSE,
+	SUBS_IS_LOADING,
+	CLEAR_MESSAGE,
+	HANDLE_LOADER,
+	SUBS_ERROR_OCCURRED,
+	SUBS_LOAD_DATA_SUCCESS,
 	SUBS_HANDLE_CHANGE_FORM,
-	SUBS_HANDLE_SUBMIT_FORM,
+	SUBS_HANDLE_SUBMIT_SUCCESS,
+	SUBS_HANDLE_SUBMIT_FAILED,
+	SUBS_MAIL_DELETED_SUCCESS,
+	SUBS_EDIT_EMAIL_HANDLE_CLICK,
+	SUBS_EDIT_EMAIL_HANDLE_CHANGE,
+	SUBS_EDIT_EMAIL_SUCCESS,
 } from '../constants'
 
-export const handleRequestSort = (event, property) => {
-	return (dispatch, selector) => {
-		const state = selector(state => state).subscriptions
-
-		const isAsc = state.orderBy === property && state.order === 'asc'
-		dispatch({
-			type: SUBS_HANDLE_REQ_SORT,
-			payload: {
-				order: isAsc ? 'desc' : 'asc',
-				orderBy: property,
-			},
-		})
+export const handleClearMessage = () => {
+	return dispatch => {
+		dispatch({ type: CLEAR_MESSAGE })
 	}
 }
 
-export const handleSelectAllClick = event => {
-	return (dispatch, selector) => {
-		const state = selector(state => state).subscriptions
-		console.log(state)
-		const newSelecteds = state.emails.map(e => e.email)
-
-		dispatch({
-			type: SUBS_HANDLE_SELECTED_ALL_CLICK,
-			payload: event.target.checked ? newSelecteds : [],
-		})
-	}
-}
-
-export const handleClick = (event, name) => {
-	return (dispatch, selector) => {
-		const { selected } = selector(state => state).subscriptions
-		const selectedIndex = selected.indexOf(name)
-		let newSelected = []
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name)
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1))
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1))
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+export const getDataFromServer = () => {
+	return async (dispatch, selector) => {
+		const state = selector(state => state)
+		if (state.subscriptions.subscribers.length === 0) {
+			dispatch({
+				type: HANDLE_LOADER,
+			})
+			try {
+				const res = await axios.get(process.env.REACT_APP_SUBS_GET_DATA, {
+					headers: {
+						'x-api-key': process.env.REACT_APP_API_KEY,
+						'x-auth-token': state.app.accessToken,
+					},
+				})
+				dispatch({
+					type: SUBS_LOAD_DATA_SUCCESS,
+					payload: res.data,
+				})
+			} catch (e) {
+				dispatch({
+					type: SUBS_ERROR_OCCURRED,
+					payload: e.message,
+				})
+			}
 		}
-		dispatch({
-			type: SUBS_HANDLE_CLICK,
-			payload: newSelected,
-		})
-	}
-}
-
-export const handleChangePage = newPage => {
-	return dispatch => {
-		dispatch({
-			type: SUBS_HANDLE_CHANGE_PAGE,
-			payload: newPage,
-		})
-	}
-}
-
-export const handleChangeRowsPerPage = event => {
-	return dispatch => {
-		dispatch({
-			type: SUBS_HANDLE_CHANGE_ROWS_PER_PAGE,
-			payload: parseInt(event.target.value, 10),
-		})
-	}
-}
-
-export const handleChangeDense = event => {
-	return dispatch => {
-		dispatch({
-			type: SUBS_HANDLE_CHANGE_DENSE,
-			payload: event.target.checked,
-		})
 	}
 }
 
 export const handleChangeForm = event => {
-	let obj = {
-		target: {},
-	}
-	if (!event.target) {
-		obj.target.name = 'message'
-		obj.target.value = event.editor.getData()
-	} else {
-		event.persist()
-	}
+	event.persist()
+
 	return dispatch => {
 		dispatch({
 			type: SUBS_HANDLE_CHANGE_FORM,
-			payload: !event.target ? obj : event,
+			payload: event,
 		})
 	}
 }
 
 export const handleSubmitForm = event => {
 	event.preventDefault()
+	return async (dispatch, selector) => {
+		const state = selector(state => state)
+		const {
+			emailSender: { subject, message },
+		} = state.subscriptions
+		dispatch({
+			type: HANDLE_LOADER,
+		})
+		try {
+			const res = await axios.post(
+				process.env.REACT_APP_SUBS_SEND_MAIL,
+				{
+					subject,
+					message,
+				},
+				{
+					headers: {
+						'x-api-key': process.env.REACT_APP_API_KEY,
+						'x-auth-token': state.app.accessToken,
+					},
+				}
+			)
+			dispatch({
+				type: SUBS_HANDLE_SUBMIT_SUCCESS,
+				payload: res.data.message,
+			})
+		} catch (e) {
+			dispatch({
+				type: SUBS_HANDLE_SUBMIT_FAILED,
+				payload: e.message,
+			})
+		}
+	}
+}
+
+export const handleDeleteMail = id => {
+	return async (dispatch, selector) => {
+		const state = selector(state => state)
+		dispatch({
+			type: HANDLE_LOADER,
+		})
+		try {
+			const res = await axios.delete(`${process.env.REACT_APP_SUBS_DELETE_MAIL}/${id}`, {
+				headers: {
+					'x-api-key': process.env.REACT_APP_API_KEY,
+					'x-auth-token': state.app.accessToken,
+				},
+			})
+
+			const subscribers = state.subscriptions.subscribers.filter(sub => sub._id !== res.data.subscriber._id)
+			dispatch({
+				type: SUBS_MAIL_DELETED_SUCCESS,
+				payload: { subscribers, message: res.data.message },
+			})
+		} catch (e) {
+			dispatch({
+				type: SUBS_ERROR_OCCURRED,
+			})
+		}
+	}
+}
+
+export const handleClickEditEmail = subscriber => {
 	return dispatch => {
 		dispatch({
-			type: SUBS_HANDLE_SUBMIT_FORM,
+			type: SUBS_EDIT_EMAIL_HANDLE_CLICK,
+			payload: subscriber,
 		})
+	}
+}
+
+export const handleChangeEditEmail = e => {
+	e.persist()
+	return dispatch => {
+		dispatch({
+			type: SUBS_EDIT_EMAIL_HANDLE_CHANGE,
+			payload: e.target.value,
+		})
+	}
+}
+
+export const handleSubmitEditEmail = e => {
+	e.preventDefault()
+	return async (dispatch, selector) => {
+		const state = selector(state => state)
+		const {
+			editSubscriber: { email, _id },
+		} = state.subscriptions
+		dispatch({
+			type: SUBS_IS_LOADING,
+		})
+		try {
+			const res = await axios.put(
+				`${process.env.REACT_APP_SUBS_UPDATE_MAIL}/${_id}`,
+				{ email },
+				{
+					headers: {
+						'x-api-key': process.env.REACT_APP_API_KEY,
+						'x-auth-token': state.app.accessToken,
+					},
+				}
+			)
+			let subscribers = state.subscriptions.subscribers
+
+			subscribers.forEach(s => {
+				if (s._id.toString() === res.data.subscriber._id) {
+					s.email = res.data.subscriber.email
+				}
+			})
+			dispatch({
+				type: SUBS_EDIT_EMAIL_SUCCESS,
+				payload: { message: res.data.message, subscribers },
+			})
+		} catch (e) {
+			dispatch({
+				type: SUBS_ERROR_OCCURRED,
+				payload: e.response ? e.response.data.message : e.message,
+			})
+		}
 	}
 }

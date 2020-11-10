@@ -8,7 +8,7 @@ import Skills from './components/skills'
 import Contact from './components/contact'
 import Portfolio from './components/portfolio'
 import Services from './components/services'
-import Blog from './components/blog'
+import Blogs, { Posts } from './components/blog'
 
 import { getDataFromServer } from './redux/actions/portfolio'
 
@@ -39,8 +39,12 @@ const routes = [
 		component: Services,
 	},
 	{
+		path: '/blogs/:title',
+		component: Posts,
+	},
+	{
 		path: '/blogs',
-		component: Blog,
+		component: Blogs,
 	},
 ]
 

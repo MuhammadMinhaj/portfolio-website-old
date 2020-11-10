@@ -4,9 +4,9 @@ import Dashboard from './components/dashboard'
 import Subscriptions from './components/subscriptions'
 import PortfolioCreation from './components/portfolioCreation'
 import Portfolio from './components/portfolio'
-import Users from './components/users'
 import AllBlogs from './components/allBlogs'
 import BlogCreation from './components/blogCreation'
+import Contact from './components/contact'
 // Insert here All Routes and Components
 const routes = [
 	{
@@ -30,12 +30,12 @@ const routes = [
 		component: BlogCreation,
 	},
 	{
-		path: '/users',
-		component: Users,
-	},
-	{
 		path: '/blogs',
 		component: AllBlogs,
+	},
+	{
+		path: '/contact',
+		component: Contact,
 	},
 ]
 export default () => {

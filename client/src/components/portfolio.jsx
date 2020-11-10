@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import styled from './style.module.css'
@@ -19,6 +20,7 @@ import {
 	Grow,
 	Chip,
 	IconButton,
+	Snackbar,
 } from '@material-ui/core'
 
 import { Visibility as VisibilityIcon, Refresh as RefreshIcon } from '@material-ui/icons'
@@ -181,6 +183,7 @@ const SearchItems = () => {
 }
 
 export const Portfolio = () => {
+	const location = useLocation()
 	const state = useSelector(state => state.portfolio)
 	const { isLoading, error, projects, groupId, avoidPage, exactPage, itemPerPage, searchTerms } = state
 	let projectLists = projects.filter(p => p.group.toString() === groupId.toString())
@@ -188,6 +191,19 @@ export const Portfolio = () => {
 	const dispatch = useDispatch()
 	return (
 		<div>
+			<Snackbar
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				open={error ? true : false}
+				message={`${error} — Please refresh`}
+				action={
+					<IconButton size="small" aria-label="close" color="secondary" href={location.pathname}>
+						<RefreshIcon fontSize="small" />
+					</IconButton>
+				}
+			/>
 			<Container>
 				<Title title="My" subTitle="Portfolio" />
 				<CustomizedDialogs handleClose={() => dispatch(handleClickItemModal(null))} state={state} />

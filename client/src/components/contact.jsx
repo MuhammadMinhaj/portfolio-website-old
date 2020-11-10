@@ -1,5 +1,6 @@
 import React from 'react'
-import { Container, Grid, TextField, Button, useMediaQuery } from '@material-ui/core'
+import { useSelector, useDispatch } from 'react-redux'
+import { Container, Grid, TextField, Button, IconButton, useMediaQuery, Snackbar, LinearProgress } from '@material-ui/core'
 import { Title } from '../common'
 import SEO from '../common/seo'
 import styled from './style.module.css'
@@ -11,7 +12,10 @@ import {
 	DoubleArrow as DoubleArrowIcon,
 	Phone as PhoneIcon,
 	Duo as DuoIcon,
+	Close as CloseIcon,
 } from '@material-ui/icons'
+
+import { handleChange, handleSubmit, handleClearAlertMessage } from '../redux/actions'
 
 const Item = props => (
 	<div className={styled.item}>
@@ -30,6 +34,8 @@ const Item = props => (
 )
 
 export const Contact = () => {
+	const { name, email, subject, message, errors, alertMessage, isLoading } = useSelector(state => state).web.contact
+	const dispatch = useDispatch()
 	const isMatchedWidth = useMediaQuery('(min-width:576px)')
 	const contactLists = [
 		{
@@ -57,6 +63,18 @@ export const Contact = () => {
 		<Container>
 			<Title title="Contact" subTitle="Me" />
 			{isMatchedWidth && <h3 style={{ textAlign: 'center', color: '#607d8b' }}>OR</h3>}
+
+			<Snackbar
+				message={alertMessage}
+				open={alertMessage ? true : false}
+				autoHideDuration={8000}
+				onClose={() => dispatch(handleClearAlertMessage())}
+				action={
+					<IconButton color="secondary" size="small" onClick={() => dispatch(handleClearAlertMessage())}>
+						<CloseIcon />
+					</IconButton>
+				}
+			/>
 			<Grid container>
 				<Grid container item sm={6}>
 					<div className={styled.contactAddress}>
@@ -68,11 +86,68 @@ export const Contact = () => {
 				{!isMatchedWidth && <h3 style={{ margin: 'auto', color: '#607d8b' }}>OR</h3>}
 				<Grid container item sm={6}>
 					<div className={styled.contactForm}>
-						<form>
-							<TextField label="Name" fullWidth name="name" placeholder="Name" margin="normal" size="medium" />
-							<TextField label="Email" fullWidth name="email" placeholder="example@example.com" margin="normal" size="medium" type="email" />
-							<TextField label="Subject" fullWidth multiline rowsMax={2} name="subject" placeholder="Subject" margin="normal" size="medium" />
-							<TextField label="Message" fullWidth multiline rows={10} name="message" placeholder="Message" margin="normal" size="medium" />
+						<form onSubmit={e => dispatch(handleSubmit(e))}>
+							<TextField
+								label="Name"
+								fullWidth
+								name="name"
+								placeholder="Name"
+								margin="normal"
+								size="medium"
+								value={name}
+								onChange={e => dispatch(handleChange(e))}
+								error={errors.name ? true : false}
+								helperText={errors.name}
+							/>
+							<TextField
+								label="Email"
+								fullWidth
+								name="email"
+								placeholder="example@example.com"
+								margin="normal"
+								size="medium"
+								type="email"
+								value={email}
+								onChange={e => dispatch(handleChange(e))}
+								error={errors.email ? true : false}
+								helperText={errors.email}
+							/>
+
+							<TextField
+								label="Subject"
+								fullWidth
+								multiline
+								rowsMax={2}
+								name="subject"
+								placeholder="Subject"
+								margin="normal"
+								size="medium"
+								value={subject}
+								onChange={e => dispatch(handleChange(e))}
+								error={errors.subject ? true : false}
+								helperText={errors.subject}
+							/>
+
+							<TextField
+								label="Message"
+								fullWidth
+								multiline
+								rows={10}
+								name="message"
+								placeholder="Message"
+								margin="normal"
+								size="medium"
+								value={message}
+								onChange={e => dispatch(handleChange(e))}
+								error={errors.message ? true : false}
+								helperText={errors.message}
+							/>
+							{isLoading && (
+								<div style={{ marginBottom: '0.5rem' }}>
+									<LinearProgress />
+								</div>
+							)}
+
 							<Button type="submit" variant="contained" color="primary" endIcon={<SendIcon>send</SendIcon>} size="large">
 								Submit
 							</Button>

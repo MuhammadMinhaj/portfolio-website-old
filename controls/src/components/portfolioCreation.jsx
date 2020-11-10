@@ -26,8 +26,7 @@ import {
 import { CustomTabs, CustomInlineForm, CustomAlert, Loader, CustomModal, ConfimDialog } from '../common'
 import CustomTable from '../common/table'
 import { ProjectStepper } from './commonPortfolio'
-// Style
-import styled from './style.module.css'
+
 
 const CreateGroup = () => {
 	const { isLoading, isLoadingTow, groupname, group, updateGroup } = useSelector(state => state.portfolio)
@@ -84,45 +83,44 @@ const CreateGroup = () => {
 				handleChange={e => dispatch(createGroupHandleChange(e))}
 				handleSubmit={e => dispatch(createGroupHandleSubmit(e))}
 			/>
-			<Paper className={styled.padding} square variant="outlined">
-				<Loader isLoading={isLoading} />
-				<ConfimDialog
-					isOpen={settings.isOpen}
-					error={settings.error}
-					handleToggle={handleToggle}
-					clearError={() => setSettings({ ...settings, error: '' })}
-					handleChange={handleChane}
-					contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
-					handleConfirm={handleSubmit}
-				/>
 
-				<CustomModal
-					title="Update"
-					open={open}
-					handleClick={() => handleClick()}
-					bodyComponent={() => (
-						<TextField variant="outlined" value={updateGroup.title} onChange={e => dispatch(handleChangeUpdateGroup(e))} fullWidth />
-					)}
-					width="sm"
-					handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
-					isLoading={isLoadingTow}
-				/>
+			<Loader isLoading={isLoading} />
+			<ConfimDialog
+				isOpen={settings.isOpen}
+				error={settings.error}
+				handleToggle={handleToggle}
+				clearError={() => setSettings({ ...settings, error: '' })}
+				handleChange={handleChane}
+				contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
+				handleConfirm={handleSubmit}
+			/>
 
-				<CustomTable
-					rows={group}
-					headCells={[{ id: 'name', numeric: false, disablePadding: false, label: 'Group' }]}
-					control={item => (
-						<>
-							<IconButton color="primary" onClick={() => handleClick(item)}>
-								<EditIcon />
-							</IconButton>
-							<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
-								<DeleteIcon />
-							</IconButton>
-						</>
-					)}
-				/>
-			</Paper>
+			<CustomModal
+				title="Update"
+				open={open}
+				handleClick={() => handleClick()}
+				bodyComponent={() => (
+					<TextField variant="outlined" value={updateGroup.title} onChange={e => dispatch(handleChangeUpdateGroup(e))} fullWidth />
+				)}
+				width="sm"
+				handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
+				isLoading={isLoadingTow}
+			/>
+
+			<CustomTable
+				rows={group}
+				headCells={[{ id: 'name', numeric: false, disablePadding: false, label: 'Group' }]}
+				control={item => (
+					<>
+						<IconButton color="primary" onClick={() => handleClick(item)}>
+							<EditIcon />
+						</IconButton>
+						<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
+							<DeleteIcon />
+						</IconButton>
+					</>
+				)}
+			/>
 		</>
 	)
 }

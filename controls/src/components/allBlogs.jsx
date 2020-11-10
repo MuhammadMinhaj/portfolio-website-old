@@ -180,9 +180,13 @@ const EditForm = () => {
 			</Collapse>
 
 			<FormControl margin="dense" fullWidth>
-				<ReactEditor
+				{/* <ReactEditor
 					data={state.updatePost.content && JSON.parse(state.updatePost.content)}
 					handleChange={(api, newData) => dispatch(postUpdateHandleChange(newData))}
+				/> */}
+				<ReactEditor
+					data={state.updatePost.content && JSON.parse(state.updatePost.content)}
+					handleChange={newData => dispatch(postUpdateHandleChange(newData))}
 				/>
 			</FormControl>
 

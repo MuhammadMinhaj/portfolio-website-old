@@ -1,4 +1,17 @@
-import { HANDLE_MENU, INCREMENT_STEP, DECREMENT_STEP, DYNAMIC_ACTIVE_STEP, HANDLE_MODAL } from '../constants/type'
+import axios from 'axios'
+import {
+	HANDLE_MENU,
+	INCREMENT_STEP,
+	DECREMENT_STEP,
+	DYNAMIC_ACTIVE_STEP,
+	HANDLE_MODAL,
+	HANDLE_CHANGE_CONTACT_FIELDS,
+	HANDLE_SUBMIT_CONTACT_FORM_SUCCESS,
+	HANDLE_SUBMIT_CONTACT_FORM_FAILED,
+	HANDLE_LOADER_CONTACT_FORM,
+	HANDLE_CHANGE_CONTACT_FIELDS_ERROR,
+	HANDLE_CLICK_CONTACT_ALERT_MESSAGE_CLEAR,
+} from '../constants/type'
 
 // Page Scroll Progress
 
@@ -59,6 +72,75 @@ export const handleModal = index => {
 		dispatch({
 			type: HANDLE_MODAL,
 			payload: index,
+		})
+	}
+}
+
+export const handleChange = e => {
+	e.persist()
+	return dispatch => {
+		dispatch({
+			type: HANDLE_CHANGE_CONTACT_FIELDS,
+			payload: e,
+		})
+	}
+}
+
+export const handleSubmit = e => {
+	e.preventDefault()
+	return async (dispatch, selector) => {
+		dispatch({
+			type: HANDLE_LOADER_CONTACT_FORM,
+		})
+		const { name, email, subject, message } = selector(state => state).web.contact
+		let errors = {}
+		if (!name) {
+			errors.name = 'Please provied your name'
+		}
+		if (!email) {
+			errors.email = 'Please provied your email'
+		}
+		if (!subject) {
+			errors.subject = 'Please provied your subject'
+		}
+		if (!message) {
+			errors.message = 'Please provied your message'
+		}
+		if (Object.keys(errors).length !== 0) {
+			dispatch({
+				type: HANDLE_CHANGE_CONTACT_FIELDS_ERROR,
+				payload: errors,
+			})
+			return false
+		}
+
+		try {
+			const res = await axios.post(
+				process.env.REACT_APP_URI_POST_SEND_CONTACT,
+				{ name, email, subject, message },
+				{
+					headers: {
+						'x-api-key': process.env.REACT_APP_API_KEY,
+					},
+				}
+			)
+
+			dispatch({
+				type: HANDLE_SUBMIT_CONTACT_FORM_SUCCESS,
+				payload: res.data.message,
+			})
+		} catch (e) {
+			dispatch({
+				type: HANDLE_SUBMIT_CONTACT_FORM_FAILED,
+				payload: e.response ? e.response.data.message : e.message,
+			})
+		}
+	}
+}
+export const handleClearAlertMessage = () => {
+	return dispatch => {
+		dispatch({
+			type: HANDLE_CLICK_CONTACT_ALERT_MESSAGE_CLEAR,
 		})
 	}
 }

@@ -97,7 +97,8 @@ const BlogCreation = () => {
 								</FormControl>
 							</Collapse>
 							<FormControl fullWidth margin="dense">
-								<ReactEditor data={content && JSON.parse(content)} handleChange={(api, data) => dispatch(createBlogHandleChange(data))} />
+								{/* <ReactEditor data={content && JSON.parse(content)} handleChange={(api, data) => dispatch(createBlogHandleChange(data))} /> */}
+								<ReactEditor data={content && JSON.parse(content)} handleChange={data => dispatch(createBlogHandleChange(data))} />
 							</FormControl>
 							{/* Selection Item */}
 
@@ -267,7 +268,7 @@ const CreateGroup = () => {
 							</IconButton>
 						</>
 					)}
-					handleSelectedDelete={list => console.log(list)}
+			
 				/>
 			</Paper>
 		</>

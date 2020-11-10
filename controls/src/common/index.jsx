@@ -24,6 +24,7 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	Snackbar,
 } from '@material-ui/core'
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import { Alert } from '@material-ui/lab'
@@ -196,7 +197,7 @@ const CustomDialogActions = withStyles(theme => ({
 	},
 }))(DialogActions)
 
-export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSubmit, width, isLoading }) => {
+export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSubmit, width, isLoading, submitButton }) => {
 	const [screen, setScreen] = useState(false)
 	const handleClickScreen = () => {
 		setScreen(!screen)
@@ -219,12 +220,17 @@ export const CustomModal = ({ open, handleClick, bodyComponent, title, handleSub
 					</CustomDialogTitle>
 
 					<CustomDialogContent dividers>{bodyComponent()}</CustomDialogContent>
+
 					<CustomDialogActions style={{ justifyContent: 'space-between' }}>
 						<IconButton onClick={handleClickScreen}>{screen ? <FullscreenExitIcon /> : <FullscreenIcon />}</IconButton>
 						<Loader isLoading={isLoading ? true : false} />
-						<Button autoFocus type="submit" color="primary" variant="contained" startIcon={<UpdateIcon />}>
-							Update
-						</Button>
+						{submitButton ? (
+							submitButton()
+						) : (
+							<Button autoFocus type="submit" color="primary" variant="contained" startIcon={<UpdateIcon />}>
+								Update
+							</Button>
+						)}
 					</CustomDialogActions>
 				</form>
 			</Dialog>
@@ -393,5 +399,27 @@ export const CustomLoader = ({ isLoader, text }) => {
 				</Typography>
 			</div>
 		</Dialog>
+	)
+}
+
+export const CustomMessage = ({ text, handleClose }) => {
+	return (
+		<Snackbar
+			anchorOrigin={{
+				vertical: 'bottom',
+				horizontal: 'left',
+			}}
+			open={text ? true : false}
+			autoHideDuration={6000}
+			onClose={handleClose}
+			message={text}
+			action={
+				<>
+					<IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+						<CloseIcon fontSize="small" />
+					</IconButton>
+				</>
+			}
+		/>
 	)
 }

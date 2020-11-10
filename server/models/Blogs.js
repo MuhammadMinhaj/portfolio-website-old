@@ -26,6 +26,7 @@ const schema = new Schema({
 	createdAt: {
 		type: String,
 		default: new Date().toUTCString(),
+		// default: Date.now(),
 	},
 	// {
 	// 	date: {

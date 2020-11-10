@@ -1,4 +1,16 @@
-import { HANDLE_MENU, INCREMENT_STEP, DECREMENT_STEP, DYNAMIC_ACTIVE_STEP, HANDLE_MODAL } from '../constants/type'
+import {
+	HANDLE_MENU,
+	INCREMENT_STEP,
+	DECREMENT_STEP,
+	DYNAMIC_ACTIVE_STEP,
+	HANDLE_MODAL,
+	HANDLE_CHANGE_CONTACT_FIELDS,
+	HANDLE_LOADER_CONTACT_FORM,
+	HANDLE_SUBMIT_CONTACT_FORM_SUCCESS,
+	HANDLE_SUBMIT_CONTACT_FORM_FAILED,
+	HANDLE_CHANGE_CONTACT_FIELDS_ERROR,
+	HANDLE_CLICK_CONTACT_ALERT_MESSAGE_CLEAR,
+} from '../constants/type'
 
 const { webAndapps, programming, tools } = {
 	webAndapps: [
@@ -149,6 +161,8 @@ const navItems = [
 	},
 ]
 
+const initValues = { name: '', email: '', subject: '', message: '' }
+
 const initialState = {
 	isLoading: false,
 	isOpenMenu: false,
@@ -159,6 +173,12 @@ const initialState = {
 		skillList: [[...tools], [...programming], [...webAndapps], [...webAndapps, ...programming, ...tools]],
 		isOpenModal: false,
 		index: null,
+	},
+	contact: {
+		...initValues,
+		errors: { ...initValues },
+		isLoading: false,
+		alertMessage: '',
 	},
 }
 
@@ -204,6 +224,71 @@ const reducer = (state = initialState, action) => {
 					...state.skills,
 					isOpenModal: !state.skills.isOpenModal,
 					index: action.payload,
+				},
+			}
+			return state
+		case HANDLE_CHANGE_CONTACT_FIELDS:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					[action.payload.target.name]: action.payload.target.value,
+					errors: {
+						...state.contact.errors,
+						[action.payload.target.name]: '',
+					},
+				},
+			}
+			return state
+		case HANDLE_LOADER_CONTACT_FORM:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					isLoading: true,
+				},
+			}
+			return state
+		case HANDLE_SUBMIT_CONTACT_FORM_SUCCESS:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					...initValues,
+					isLoading: false,
+					alertMessage: action.payload,
+				},
+			}
+			return state
+		case HANDLE_SUBMIT_CONTACT_FORM_FAILED:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					isLoading: false,
+					alertMessage: action.payload,
+				},
+			}
+			return state
+		case HANDLE_CHANGE_CONTACT_FIELDS_ERROR:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					errors: {
+						...state.contact.errors,
+						...action.payload,
+					},
+					isLoading: false,
+				},
+			}
+			return state
+		case HANDLE_CLICK_CONTACT_ALERT_MESSAGE_CLEAR:
+			state = {
+				...state,
+				contact: {
+					...state.contact,
+					alertMessage: '',
 				},
 			}
 			return state

@@ -15,6 +15,11 @@ const {
 	createPostPostController,
 	updatePostPutController,
 	deletePostDeleteController,
+	subscriberDataGetController,
+	subscribePostPostController,
+	deleteSubscriberDeleteController,
+	updateSubscriberPutController,
+	mailSenderPostController,
 } = require('../controllers/blogs')
 
 router.get('/data', isValidApiKey(), getPublicDataGetController)
@@ -27,4 +32,9 @@ router.post('/post/create/:id', isValidApiKey(), isAuthenticated(), upload.singl
 router.put('/post/update/:id', isValidApiKey(), isAuthenticated(), upload.single('thumbnail'), updatePostPutController)
 router.delete('/post/delete/:id', isValidApiKey(), isAuthenticated(), deletePostDeleteController)
 
+router.get('/subscribe', isAuthenticated(), isValidApiKey(), subscriberDataGetController)
+router.post('/subscribe', isValidApiKey(), subscribePostPostController)
+router.delete('/subscribe/delete/:id', isAuthenticated(), isValidApiKey(), deleteSubscriberDeleteController)
+router.put('/subscribe/update/:id', isAuthenticated(), isValidApiKey(), updateSubscriberPutController)
+router.post('/mail/send', isAuthenticated(), isValidApiKey(), mailSenderPostController)
 module.exports = router

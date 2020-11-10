@@ -1,17 +1,14 @@
 import React from 'react'
-import EditorJs from 'react-editor-js'
-import { Paper, CardContent } from '@material-ui/core'
-import { EDITOR_JS_TOOLS } from './constants.js'
+
 import './global-style.css'
-const ReactEditor = ({ data, handleChange }) => {
+
+import { Editor } from 'react-draft-wysiwyg'
+import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+
+export default ({ data, handleChange }) => {
 	return (
-		<Paper variant="outlined">
-			<CardContent>
-				<EditorJs holder="mainEditorContent" data={data} tools={EDITOR_JS_TOOLS} onChange={handleChange}></EditorJs>
-				<div id="mainEditorContent"></div>
-			</CardContent>
-		</Paper>
+		<div className="App">
+			<Editor initialContentState={data} onContentStateChange={handleChange} />
+		</div>
 	)
 }
-
-export default ReactEditor
