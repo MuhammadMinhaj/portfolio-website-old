@@ -1,21 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-	Container,
-	Grid,
-	Paper,
-	AppBar,
-	Tabs,
-	Tab,
-	Card,
-	CardMedia,
-	CardContent,
-	CardActionArea,
-	CardActions,
-	Button,
-	Typography,
-	Grow,
-} from '@material-ui/core'
+import { Container, Grid, Paper, AppBar, Tabs, Tab, IconButton } from '@material-ui/core'
 import {
 	handleClearationAll,
 	getPortfolioGroup,
@@ -31,8 +16,8 @@ import {
 	updateHandleSubmit,
 	handleClickDeleteProject,
 } from '../redux/actions/portfolio'
-import { CustomLoader, CustomModal, CustomAlert, ConfimDialog } from '../common'
-
+import {  CustomModal, CustomAlert, ConfimDialog } from '../common'
+import CustomTable from '../common/table'
 import { Edit as EditIcon, Delete as DeleteIcon } from '@material-ui/icons'
 import { ProjectStepper } from './commonPortfolio'
 const TabBar = () => {
@@ -62,42 +47,8 @@ const TabBar = () => {
 	)
 }
 
-const ListItem = ({ list, handleToggleDeleteProject }) => {
-	const dispatch = useDispatch()
-	return (
-		<Grid item sm={6}>
-			<Grow in>
-				<Card raised>
-					<CardActionArea onClick={() => dispatch(handleClickModal(list))}>
-						<CardMedia style={{ height: '250px' }} image={list.thumbnail} title={list.title} />
-						<CardContent>
-							<Typography gutterBottom variant="h5" component="h2">
-								{list.title}
-							</Typography>
-						</CardContent>
-					</CardActionArea>
-					<CardActions>
-						<Button startIcon={<EditIcon />} variant="contained" size="small" color="primary" onClick={() => dispatch(handleClickModal(list))}>
-							Edit
-						</Button>
-						<Button
-							startIcon={<DeleteIcon />}
-							variant="contained"
-							size="small"
-							color="secondary"
-							onClick={e => handleToggleDeleteProject(e, list._id)}
-						>
-							Delete
-						</Button>
-					</CardActions>
-				</Card>
-			</Grow>
-		</Grid>
-	)
-}
-
 const ProjectsList = () => {
-	const { projects, selectedGroup } = useSelector(state => state.portfolio)
+	const { projects, selectedGroup, isLoading } = useSelector(state => state.portfolio)
 	const dispatch = useDispatch()
 	const [open, setOpen] = useState(false)
 	const [text, setText] = useState('')
@@ -115,6 +66,23 @@ const ProjectsList = () => {
 		setOpen(!open)
 		setId(id)
 	}
+
+	const handleFilter = () => {
+		let filtered = projects
+			.filter(p => p.group.toString() === selectedGroup)
+			.map(p => {
+				return {
+					_id: p._id,
+					title: p.title,
+					industry: p.industry,
+					time: p.time,
+					createdAt: p.createdAt,
+					thumbnail: p.thumbnail,
+				}
+			})
+		return filtered
+	}
+
 	return (
 		<Grid container spacing={2}>
 			<ConfimDialog
@@ -126,11 +94,27 @@ const ProjectsList = () => {
 				contentText="Delete all projects images and thumbnail permanently!You can't back the project after deleting or deleted.Type the "
 				handleConfirm={handleConfirm}
 			/>
-			{projects
-				.filter(p => p.group.toString() === selectedGroup)
-				.map((p, ind) => (
-					<ListItem list={p} key={ind} handleToggleDeleteProject={handleToggleProjectDelete} />
-				))}
+			<CustomTable
+				rows={handleFilter()}
+				headCells={[
+					{ id: 'title', numeric: false, disablePadding: false, label: 'Title' },
+					{ id: 'industry', numeric: false, disablePadding: false, label: 'Industry' },
+					{ id: 'time', numeric: false, disablePadding: false, label: 'Time' },
+					{ id: 'createdAt', numeric: false, disablePadding: false, label: 'CreatedAt' },
+					{ id: 'thumbnail', numeric: false, disablePadding: false, label: 'Thumbnail' },
+				]}
+				control={item => (
+					<>
+						<IconButton color="primary" onClick={() => dispatch(handleClickModal(item._id))}>
+							<EditIcon />
+						</IconButton>
+						<IconButton color="secondary" onClick={e => handleToggleProjectDelete(e, item._id)}>
+							<DeleteIcon />
+						</IconButton>
+					</>
+				)}
+				isLoading={isLoading}
+			/>
 		</Grid>
 	)
 }
@@ -161,7 +145,6 @@ const UpdateForm = () => {
 				selectedGroup={updateProject.group}
 				isUpdate={true}
 				isLoading={isLoadingTow}
-				loaderText="Updating..."
 				handleChangeFile={files => dispatch(handleChangeFileUpdate(files[0]))}
 				handleSaveFiles={files => dispatch(handleChangeFilesUpdate(files))}
 				getTagsValues={tags => dispatch(handleChangeUpdateProject(tags))}
@@ -182,7 +165,6 @@ const Portfolio = () => {
 	}, [dispatch])
 	return (
 		<Container>
-			<CustomLoader isLoader={state.isLoading} text="Loading..." />
 			<TabBar />
 			<br />
 			<div style={{ maxWidth: '800px' }}>

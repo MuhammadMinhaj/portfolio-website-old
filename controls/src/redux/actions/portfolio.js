@@ -34,8 +34,8 @@ import {
 export const getPortfolioGroup = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
-		const { app, portfolio } = state
-
+		const { portfolio } = state
+		const Token = localStorage.getItem('token')
 		if (portfolio.group.length === 0) {
 			dispatch({
 				type: PORTFOLIO_LOADING_OPENED,
@@ -44,7 +44,7 @@ export const getPortfolioGroup = () => {
 				const res = await axios.get(process.env.REACT_APP_URI_GET_PORTFOLIO, {
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': app.accessToken,
+						'x-auth-token': Token,
 					},
 				})
 				dispatch({
@@ -63,7 +63,7 @@ export const getPortfolioGroup = () => {
 export const getPortfolioProjects = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
-
+		const Token = localStorage.getItem('token')
 		if (state.portfolio.projects.length === 0) {
 			dispatch({
 				type: PORTFOLIO_LOADING_OPENED,
@@ -72,7 +72,7 @@ export const getPortfolioProjects = () => {
 				const res = await axios.get(process.env.REACT_APP_URI_GET_PORTFOLIO_PROJECTS, {
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				})
 				dispatch({
@@ -118,9 +118,8 @@ export const createGroupHandleSubmit = event => {
 	event.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
-		const app = state.app
 		const { groupname } = state.portfolio
-
+		const Token = localStorage.getItem('token')
 		// Opening Loader
 		dispatch({
 			type: PORTFOLIO_LOADING_OPENED,
@@ -140,7 +139,7 @@ export const createGroupHandleSubmit = event => {
 				{
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': app.accessToken,
+						'x-auth-token': Token,
 					},
 				}
 			)
@@ -181,6 +180,7 @@ export const handleSubmitUpdateGroup = event => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const { group, updateGroup } = state.portfolio
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: PORTFOLIO_LOADING_TOW_OPENED,
 		})
@@ -198,7 +198,7 @@ export const handleSubmitUpdateGroup = event => {
 				{
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				}
 			)
@@ -227,6 +227,7 @@ export const handleSubmitUpdateGroup = event => {
 export const handleClickDeleteGroup = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: PORTFOLIO_LOADING_OPENED,
 		})
@@ -234,7 +235,7 @@ export const handleClickDeleteGroup = id => {
 			const res = await axios.delete(`${process.env.REACT_APP_URI_PORTFOLIO_DELETE}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			const group = state.portfolio.group.filter(g => g._id.toString() !== res.data.group._id.toString())
@@ -326,6 +327,7 @@ export const handleChangeImageTitle = (e, activeStep) => {
 export const createHandleSubmit = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		const {
 			createProject: { title, thumbnail, link, description, tools, images, group, client, industry, time },
 		} = state.portfolio
@@ -377,7 +379,7 @@ export const createHandleSubmit = () => {
 			const res = await axios.post(`${process.env.REACT_APP_URI_PORTFOLIO_POST_CREATE}/${group}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 					'Content-Type': 'multipart/form-data',
 				},
 			})
@@ -411,8 +413,19 @@ export const handleGroupSelection = id => {
 	}
 }
 
-export const handleClickModal = list => {
-	return dispatch => {
+export const handleClickModal = id => {
+	return (dispatch, selector) => {
+		const { projects } = selector(state => state).portfolio
+		let list = null
+
+		if (id) {
+			projects.forEach(p => {
+				if (p._id.toString() === id.toString()) {
+					list = p
+				}
+			})
+		}
+
 		dispatch({
 			type: PORTFOLIO_HANDLE_CLICK_EDIT_MODAL,
 			payload: list,
@@ -497,6 +510,7 @@ export const updateHandleSubmit = e => {
 	e.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		const {
 			updateProject: { _id, title, thumbnail, link, description, tools, client, industry, time, images, group, imgDeleteId },
 			projects,
@@ -562,7 +576,7 @@ export const updateHandleSubmit = e => {
 			const res = await axios.put(`${process.env.REACT_APP_URI_PORTFOLIO_POST_UPDATE}/${_id}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 					'Content-Type': 'multipart/form-data',
 				},
 			})
@@ -601,6 +615,7 @@ export const updateHandleSubmit = e => {
 export const handleClickDeleteProject = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: PORTFOLIO_LOADING_OPENED,
 		})
@@ -608,7 +623,7 @@ export const handleClickDeleteProject = id => {
 			const res = await axios.delete(`${process.env.REACT_APP_URI_PORTFOLIO_POST_DELETE}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 

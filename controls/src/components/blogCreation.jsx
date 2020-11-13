@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-// import CKEditor from 'ckeditor4-react'
 import {
 	Grow,
 	Container,
@@ -23,7 +22,7 @@ import { DropzoneArea } from 'material-ui-dropzone'
 import styled from './style.module.css'
 
 // Imported Common Components
-import { CustomTabs, CustomInlineForm, CustomSelectionItem, Loader, CustomAlert, CustomModal, ConfimDialog } from '../common'
+import { CustomTabs, CustomInlineForm, CustomSelectionItem, CustomAlert, CustomModal, ConfimDialog } from '../common'
 import CustomTable from '../common/table'
 import ReactEditor from '../common/react-editor'
 // Imported All Actions
@@ -97,10 +96,8 @@ const BlogCreation = () => {
 								</FormControl>
 							</Collapse>
 							<FormControl fullWidth margin="dense">
-								{/* <ReactEditor data={content && JSON.parse(content)} handleChange={(api, data) => dispatch(createBlogHandleChange(data))} /> */}
 								<ReactEditor data={content && JSON.parse(content)} handleChange={data => dispatch(createBlogHandleChange(data))} />
 							</FormControl>
-							{/* Selection Item */}
 
 							<Grid container spacing={3}>
 								<Grid item sm={6}>
@@ -211,66 +208,64 @@ const CreateGroup = () => {
 				handleChange={e => dispatch(handleGroupNameChange(e))}
 				handleSubmit={e => dispatch(handleGroupNameSubmit(e))}
 			/>
-			<Paper className={styled.padding} square variant="outlined">
-				<Loader isLoading={state.isLoading} />
-				<ConfimDialog
-					isOpen={settings.isOpen}
-					error={settings.error}
-					handleToggle={handleToggle}
-					clearError={() => setSettings({ ...settings, error: '' })}
-					handleChange={handleChane}
-					contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
-					handleConfirm={handleSubmit}
-				/>
-				<CustomModal
-					title="Update"
-					open={open}
-					handleClick={() => handleClick()}
-					bodyComponent={() => (
-						<>
-							<TextField
-								variant="outlined"
-								value={updateGroup ? updateGroup.title : ''}
-								onChange={e => dispatch(handleChangeUpdateGroup(e))}
-								fullWidth
-							/>
-							{updateGroup && (
-								<FormControl margin="dense" fullWidth>
-									<DropzoneArea
-										acceptedFiles={['image/*']}
-										dropzoneText={'Drag and drop an image here or click'}
-										onChange={file => dispatch(handleChangeUpdateGroup(file))}
-										filesLimit={1}
-										initialFiles={[updateGroup.thumbnail]}
-									/>
-								</FormControl>
-							)}
-						</>
-					)}
-					width="sm"
-					handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
-					isLoading={isUpdateLoading}
-				/>
 
-				<CustomTable
-					rows={group}
-					headCells={[
-						{ id: 'name', numeric: false, disablePadding: false, label: 'Group' },
-						{ numeric: false, disablePadding: false, label: 'Thumbnail' },
-					]}
-					control={item => (
-						<>
-							<IconButton color="primary" onClick={() => handleClick(item)}>
-								<EditIcon />
-							</IconButton>
-							<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
-								<DeleteIcon />
-							</IconButton>
-						</>
-					)}
-			
-				/>
-			</Paper>
+			<ConfimDialog
+				isOpen={settings.isOpen}
+				error={settings.error}
+				handleToggle={handleToggle}
+				clearError={() => setSettings({ ...settings, error: '' })}
+				handleChange={handleChane}
+				contentText="Confirm us if you want to delete group and after the deleted group can't back the group,It will permanently delete."
+				handleConfirm={handleSubmit}
+			/>
+			<CustomModal
+				title="Update"
+				open={open}
+				handleClick={() => handleClick()}
+				bodyComponent={() => (
+					<>
+						<TextField
+							variant="outlined"
+							value={updateGroup ? updateGroup.title : ''}
+							onChange={e => dispatch(handleChangeUpdateGroup(e))}
+							fullWidth
+						/>
+						{updateGroup && (
+							<FormControl margin="dense" fullWidth>
+								<DropzoneArea
+									acceptedFiles={['image/*']}
+									dropzoneText={'Drag and drop an image here or click'}
+									onChange={file => dispatch(handleChangeUpdateGroup(file))}
+									filesLimit={1}
+									initialFiles={[updateGroup.thumbnail]}
+								/>
+							</FormControl>
+						)}
+					</>
+				)}
+				width="sm"
+				handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
+				isLoading={isUpdateLoading}
+			/>
+
+			<CustomTable
+				rows={group}
+				headCells={[
+					{ id: 'name', numeric: false, disablePadding: false, label: 'Group' },
+					{ numeric: false, disablePadding: false, label: 'Thumbnail' },
+				]}
+				control={item => (
+					<>
+						<IconButton color="primary" onClick={() => handleClick(item)}>
+							<EditIcon />
+						</IconButton>
+						<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
+							<DeleteIcon />
+						</IconButton>
+					</>
+				)}
+				isLoading={state.isLoading}
+			/>
 		</>
 	)
 }

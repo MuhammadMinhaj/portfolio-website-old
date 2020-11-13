@@ -32,8 +32,8 @@ export default () => {
 				>
 					<MenuIcon />
 				</IconButton>
-				<Typography variant="h6" noWrap>
-					Welcome To Dashboard
+				<Typography variant="button" noWrap>
+					ADMIN CONTROL SYSTEM
 				</Typography>
 			</Toolbar>
 		</AppBar>

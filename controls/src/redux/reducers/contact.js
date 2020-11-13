@@ -1,6 +1,6 @@
 const {
 	CONTACT_CLEAR_MESSAGE,
-	HANDLE_LOADER,
+	CONTACT_HANDLE_LOADER,
 	CONTACT_GET_DATA_SUCCESS,
 	CONTACT_GET_DATA_FAILED,
 	CONTACT_HANDLE_SELECTED_CONTACT_FOR_VIEW,
@@ -40,7 +40,7 @@ export default (state = initialState, action) => {
 				msg: '',
 			}
 			return state
-		case HANDLE_LOADER:
+		case CONTACT_HANDLE_LOADER:
 			state = {
 				...state,
 				isLoading: true,

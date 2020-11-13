@@ -118,11 +118,11 @@ export const Loader = ({ isLoading }) => (
 	</div>
 )
 export const CustomAlert = ({ isError, value, closeHandle }) => (
-	<div style={{ margin: '0.5rem 0rem' }}>
+	<Snackbar open={value ? true : false} autoHideDuration={8000} onClose={closeHandle}>
 		<Alert color={isError ? 'error' : 'success'} onClose={closeHandle} severity={isError ? 'error' : 'success'}>
 			{value}
 		</Alert>
-	</div>
+	</Snackbar>
 )
 
 export const ConfimDialog = ({ isOpen, error, contentText, clearError, handleToggle, handleConfirm, handleChange }) => {

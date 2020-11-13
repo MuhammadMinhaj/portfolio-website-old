@@ -7,6 +7,6 @@ const { verifytokenGetController, registerUserPostController, loginPostControlle
 
 router.get('/verify/token', verifytokenGetController)
 router.post('/register', registerUserPostController)
-router.post('/login', loginPostController)
+router.post('/login', isValidApiKey(), loginPostController)
 
 module.exports = router

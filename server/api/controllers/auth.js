@@ -14,7 +14,7 @@ exports.verifytokenGetController = async (req, res, next) => {
 		}
 		jwt.verify(token, process.env.TOKEN_SECRET, (error, decoded) => {
 			if (error) {
-				return res.json(false)
+				return res.status(200).json(false)
 			}
 			if (decoded) {
 				return res.status(200).json(true)

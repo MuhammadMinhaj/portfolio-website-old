@@ -25,7 +25,6 @@ import {
 	BLOGS_POST_UPDATE_HANDLE_CHANGE,
 	BLOGS_POST_UPDATE_SUCCESS,
 	BLOGS_POST_DELETE_SUCCESS,
-
 	// Error
 	BLOGS_HANDLE_ERROR,
 } from '../constants'
@@ -36,6 +35,7 @@ import axios from 'axios'
 export const getBlogsHandle = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		if (state.blog.group.length === 0) {
 			dispatch({
 				type: HANDLE_LOADER,
@@ -45,7 +45,7 @@ export const getBlogsHandle = () => {
 			if (state.blog.group.length === 0) {
 				const res = await axios.get(process.env.REACT_APP_URI_GET_BLOGS, {
 					headers: {
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 						'x-api-key': process.env.REACT_APP_API_KEY,
 					},
 				})
@@ -98,7 +98,6 @@ export const handleMenuChange = event => {
 export const createBlogHandleChange = (event, isFile) => {
 	// console.log('This is a value', event.target.files)
 
-
 	if (isFile) {
 		event.target = {
 			name: 'file',
@@ -120,7 +119,7 @@ export const createBlogHandleChange = (event, isFile) => {
 			event.persist()
 		}
 	}
-	
+
 	return dispatch => {
 		dispatch({
 			type: BLOGS_CREATE_HANDLE_CHANGE,
@@ -135,7 +134,7 @@ export const createBlogHandleSubmit = event => {
 		const state = selector(state => state)
 		const { createBlog, selectedGroup } = state.blog
 		const { title, keywords, content, file, lang } = createBlog
-
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: HANDLE_LOADER,
 		})
@@ -157,7 +156,7 @@ export const createBlogHandleSubmit = event => {
 			const res = await axios.post(`${process.env.REACT_APP_URI_BLOGS_POST_CREATE}/${selectedGroup}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 					'Content-Type': 'multipart/form-data',
 				},
 			})
@@ -202,6 +201,7 @@ export const handleGroupNameSubmit = event => {
 	event.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 
 		const {
 			blogCreation: { groupname, thumbnail },
@@ -224,7 +224,7 @@ export const handleGroupNameSubmit = event => {
 			const res = await axios.post(process.env.REACT_APP_URI_BLOGS_CREATE, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			dispatch({
@@ -278,12 +278,13 @@ export const handleSubmitUpdateGroup = event => {
 	event.preventDefault()
 
 	return async (dispatch, selector) => {
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: BLOGS_GROUP_UPDATE_LOADING,
 		})
 
 		try {
-			const { app, blog } = selector(state => state)
+			const { blog } = selector(state => state)
 
 			let { group, updateGroup } = blog
 
@@ -294,7 +295,7 @@ export const handleSubmitUpdateGroup = event => {
 			const res = await axios.put(`${process.env.REACT_APP_URI_BLOGS_UPDATE}/${updateGroup._id}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			group.forEach(g => {
@@ -326,7 +327,7 @@ export const handleClickDeleteGroup = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const blog = state.blog
-
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: HANDLE_LOADER,
 		})
@@ -335,7 +336,7 @@ export const handleClickDeleteGroup = id => {
 			const res = await axios.delete(`${process.env.REACT_APP_URI_BLOGS_DELETE}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			let group = blog.group.filter(g => g._id !== res.data.group._id)
@@ -378,6 +379,7 @@ export const handleTabSelectedGroupId = id => {
 export const getAllPostsRequest = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		if (state.blog.posts.length !== 0) {
 			return false
 		}
@@ -388,7 +390,7 @@ export const getAllPostsRequest = () => {
 			const res = await axios.get(process.env.REACT_APP_URI_GET_BLOGS_POSTS, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			dispatch({
@@ -405,8 +407,17 @@ export const getAllPostsRequest = () => {
 	}
 }
 
-export const selectedPostUpdateModal = post => {
-	return dispatch => {
+export const selectedPostUpdateModal = id => {
+	return (dispatch, selector) => {
+		const { posts } = selector(state => state).blog
+		let post = null
+		if (id) {
+			posts.forEach(p => {
+				if (p._id.toString() === id.toString()) {
+					post = p
+				}
+			})
+		}
 		dispatch({
 			type: BLOGS_POST_SELECTED_EDIT_MODAL,
 			payload: post,
@@ -451,6 +462,7 @@ export const handleUpdateBlogsPost = event => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
 		const { updatePost, posts } = state.blog
+		const Token = localStorage.getItem('token')
 
 		dispatch({
 			type: HANDLE_LOADER,
@@ -466,7 +478,7 @@ export const handleUpdateBlogsPost = event => {
 			const res = await axios.put(`${process.env.REACT_APP_URI_BLOGS_POST_UPDATE}/${updatePost._id}`, data, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 					'Content-Type': 'multipart/form-data',
 				},
 			})
@@ -499,18 +511,18 @@ export const handleUpdateBlogsPost = event => {
 		}
 	}
 }
-export const handleDeleteBlogsPost = post => {
+export const handleDeleteBlogsPost = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
-
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: HANDLE_LOADER,
 		})
 		try {
-			const res = await axios.delete(`${process.env.REACT_APP_URI_BLOGS_POST_DELETE}/${post._id}`, {
+			const res = await axios.delete(`${process.env.REACT_APP_URI_BLOGS_POST_DELETE}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 

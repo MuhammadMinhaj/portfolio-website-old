@@ -23,10 +23,9 @@ import {
 } from '../redux/actions/portfolio'
 
 // Common Components Imported
-import { CustomTabs, CustomInlineForm, CustomAlert, Loader, CustomModal, ConfimDialog } from '../common'
+import { CustomTabs, CustomInlineForm, CustomAlert, CustomModal, ConfimDialog } from '../common'
 import CustomTable from '../common/table'
 import { ProjectStepper } from './commonPortfolio'
-
 
 const CreateGroup = () => {
 	const { isLoading, isLoadingTow, groupname, group, updateGroup } = useSelector(state => state.portfolio)
@@ -83,8 +82,6 @@ const CreateGroup = () => {
 				handleChange={e => dispatch(createGroupHandleChange(e))}
 				handleSubmit={e => dispatch(createGroupHandleSubmit(e))}
 			/>
-
-			<Loader isLoading={isLoading} />
 			<ConfimDialog
 				isOpen={settings.isOpen}
 				error={settings.error}
@@ -100,7 +97,7 @@ const CreateGroup = () => {
 				open={open}
 				handleClick={() => handleClick()}
 				bodyComponent={() => (
-					<TextField variant="outlined" value={updateGroup.title} onChange={e => dispatch(handleChangeUpdateGroup(e))} fullWidth />
+					<TextField variant="outlined" value={updateGroup.title || ''} onChange={e => dispatch(handleChangeUpdateGroup(e))} fullWidth />
 				)}
 				width="sm"
 				handleSubmit={e => dispatch(handleSubmitUpdateGroup(e))}
@@ -120,6 +117,7 @@ const CreateGroup = () => {
 						</IconButton>
 					</>
 				)}
+				isLoading={isLoading}
 			/>
 		</>
 	)
@@ -152,7 +150,6 @@ const AddPortfolioProject = () => {
 				handleChangeImageTitle={(e, index) => dispatch(handleChangeImageTitle(e, index))}
 				project={createProject}
 				selectedGroup={createProject.group}
-				loaderText="Creating..."
 				isLoading={isLoading}
 				handleSubmit={() => dispatch(createHandleSubmit())}
 				isUpdate={false}

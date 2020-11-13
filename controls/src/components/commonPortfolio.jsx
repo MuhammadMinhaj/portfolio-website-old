@@ -18,10 +18,11 @@ import {
 	CardMedia,
 	CardActions,
 	Divider,
+	LinearProgress,
 } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { DropzoneArea, DropzoneDialog } from 'material-ui-dropzone'
-import { CustomSelectionItem, CustomLoader } from '../common'
+import { CustomSelectionItem } from '../common'
 import {
 	Send as SendIcon,
 	NavigateNext as NavigateNextIcon,
@@ -287,7 +288,7 @@ const GetStepContent = ({
 	}
 }
 
-const PreviewProject = ({ project, handleReset, handleSubmit, isUpdate }) => {
+const PreviewProject = ({ project, handleReset, handleSubmit, isUpdate, isLoading }) => {
 	return (
 		<Card raised>
 			{isUpdate && typeof project.thumbnail === 'string' ? (
@@ -328,6 +329,7 @@ const PreviewProject = ({ project, handleReset, handleSubmit, isUpdate }) => {
 					</Button>
 				)}
 			</CardActions>
+			{isLoading && <LinearProgress />}
 		</Card>
 	)
 }
@@ -346,7 +348,7 @@ export const ProjectStepper = ({
 	handleSubmit,
 	selectedGroup,
 	isLoading,
-	loaderText,
+
 	isUpdate,
 	handleDeleteImage,
 }) => {
@@ -407,11 +409,9 @@ export const ProjectStepper = ({
 				))}
 			</Stepper>
 
-			<CustomLoader isLoader={isLoading} text={loaderText} />
-
 			<div>
 				{allStepsCompleted() ? (
-					<PreviewProject project={project} handleReset={handleReset} handleSubmit={handleSubmit} isUpdate={isUpdate} />
+					<PreviewProject project={project} handleReset={handleReset} handleSubmit={handleSubmit} isUpdate={isUpdate} isLoading={isLoading} />
 				) : (
 					<>
 						<Grid container spacing={1}>

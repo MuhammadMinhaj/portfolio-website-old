@@ -5,7 +5,7 @@ import { Grid, Container, Typography, Paper, IconButton, FormControl, TextField,
 
 import { Delete as DeleteIcon, Send as SendIcon, Edit as EditIcon } from '@material-ui/icons'
 import CustomTable from '../common/table'
-import { CustomLoader, CustomMessage, ConfimDialog, CustomModal } from '../common'
+import { CustomMessage, ConfimDialog, CustomModal } from '../common'
 // Imported Actions
 import {
 	handleClearMessage,
@@ -114,7 +114,7 @@ const Subscriptions = () => {
 	}
 	return (
 		<Container>
-			<CustomLoader isLoader={isLoading} text="Loading..." />
+		
 			<CustomMessage text={error || success} handleClose={() => dispatch(handleClearMessage())} />
 			<ConfimDialog
 				isOpen={confirmDialog.isOpen}
@@ -154,7 +154,7 @@ const Subscriptions = () => {
 								</IconButton>
 							</>
 						)}
-						
+						isLoading={isLoading}
 					/>
 				</Grid>
 			</Grid>

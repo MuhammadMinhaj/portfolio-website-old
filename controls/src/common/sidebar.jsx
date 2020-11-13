@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import clsx from 'clsx'
 import { useTheme } from '@material-ui/core/styles'
-import { Drawer, List, Divider, IconButton, ListItem, ListItemText, ListItemIcon, Avatar } from '@material-ui/core'
+import { Drawer, List, Divider, IconButton, ListItem, ListItemText, ListItemIcon, Avatar, Typography } from '@material-ui/core'
 
 import {
 	ChevronLeft as ChevronLeftIcon,
@@ -12,7 +12,7 @@ import {
 	Dashboard as DashboardIcon,
 	Subscriptions as SubscriptionsIcon,
 	LibraryBooks as LibraryBooksIcon,
-	Settings as SettingsIcon,
+	ExitToApp as ExitToAppIcon,
 	PieChart as PieChartIcon,
 	// AddCircleOutline as AddCircleOutlineIcon,
 	NoteAdd as NoteAddIcon,
@@ -28,7 +28,7 @@ const dataLinks = [
 	{
 		name: 'Dashboard',
 		icon: DashboardIcon,
-		url: '',
+		url: '/dashboard',
 	},
 	{
 		name: 'Subscriptions',
@@ -62,9 +62,9 @@ const dataLinks = [
 	},
 
 	{
-		name: 'Setting',
-		icon: SettingsIcon,
-		url: '',
+		name: 'Logout',
+		icon: ExitToAppIcon,
+		url: 'logout',
 	},
 ]
 
@@ -84,6 +84,10 @@ export default () => {
 
 	const dispatch = useDispatch()
 
+	const handleClickLogout = () => {
+		localStorage.removeItem('token')
+		window.location.reload()
+	}
 	return (
 		<Drawer
 			variant="permanent"
@@ -100,19 +104,32 @@ export default () => {
 		>
 			<div className={classes.toolbar}>
 				<Avatar />
-				<h4>Muhammad Minhaj</h4>
+				<Typography style={{ marginLeft: '0.75rem' }} variant="subtitle2" color="textSecondary">
+					Muhammad Minhaj
+				</Typography>
 				<IconButton onClick={() => dispatch(handleDrawerToggle())}>
 					{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 				</IconButton>
 			</div>
 			<Divider />
 			<List>
-				{dataLinks.map((list, index) => (
-					<Link to={list.url} className={classes.link} key={index}>
-						<CustomListItem Icon={list.icon} name={list.name} />
-						{index === 3 && <Divider />}
-					</Link>
-				))}
+				{dataLinks.map((list, index) => {
+					if (list.url === 'logout') {
+						return (
+							<ListItem button onClick={handleClickLogout} key={index}>
+								<ListItemIcon>{<list.icon />}</ListItemIcon>
+								<ListItemText primary={list.name} />
+							</ListItem>
+						)
+					} else {
+						return (
+							<Link to={list.url} className={classes.link} key={index}>
+								<CustomListItem Icon={list.icon} name={list.name} />
+								{index === 3 && <Divider />}
+							</Link>
+						)
+					}
+				})}
 			</List>
 		</Drawer>
 	)

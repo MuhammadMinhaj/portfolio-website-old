@@ -10,18 +10,12 @@ import {
 	TablePagination,
 	TableRow,
 	TableSortLabel,
-	Toolbar,
-	Typography,
 	Paper,
-	IconButton,
-	Tooltip,
 	FormControlLabel,
 	Switch,
 	Avatar,
 	LinearProgress,
 } from '@material-ui/core'
-
-import { FilterList as FilterListIcon } from '@material-ui/icons'
 
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
@@ -82,34 +76,7 @@ const EnhancedTableHead = ({ classes, headCells, order, orderBy, onRequestSort }
 	)
 }
 
-const useToolbarStyles = makeStyles(theme => ({
-	root: {
-		paddingLeft: theme.spacing(2),
-		paddingRight: theme.spacing(1),
-	},
 
-	title: {
-		flex: '1 1 100%',
-	},
-}))
-
-const EnhancedTableToolbar = props => {
-	const classes = useToolbarStyles()
-
-	return (
-		<Toolbar className={classes.root}>
-			<Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-				Users
-			</Typography>
-
-			<Tooltip title="Filter list">
-				<IconButton aria-label="filter list">
-					<FilterListIcon />
-				</IconButton>
-			</Tooltip>
-		</Toolbar>
-	)
-}
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -168,7 +135,7 @@ export default function EnhancedTable({ rows, headCells, control, isLoading }) {
 	return (
 		<>
 			<Paper className={classes.paper}>
-				<EnhancedTableToolbar />
+				
 				<TableContainer className={classes.container}>
 					<Table stickyHeader className={classes.table} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'} aria-label="enhanced table">
 						<EnhancedTableHead

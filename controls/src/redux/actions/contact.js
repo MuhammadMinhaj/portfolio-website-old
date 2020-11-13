@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {
 	CONTACT_CLEAR_MESSAGE,
-	HANDLE_LOADER,
+	CONTACT_HANDLE_LOADER,
 	CONTACT_GET_DATA_SUCCESS,
 	CONTACT_GET_DATA_FAILED,
 	CONTACT_HANDLE_SELECTED_CONTACT_FOR_VIEW,
@@ -27,16 +27,15 @@ export const handleClearMessage = () => {
 
 export const getDataFromServer = () => {
 	return async (dispatch, selector) => {
-		const state = selector(state => state)
-
+		const Token = localStorage.getItem('token')
 		dispatch({
-			type: HANDLE_LOADER,
+			type: CONTACT_HANDLE_LOADER,
 		})
 		try {
 			const res = await axios.get(process.env.REACT_APP_CONTACT_CRUD, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 			dispatch({
@@ -71,14 +70,15 @@ export const handleClearId = () => {
 export const handleSubmitDeleteContact = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		dispatch({
-			type: HANDLE_LOADER,
+			type: CONTACT_HANDLE_LOADER,
 		})
 		try {
 			const res = await axios.delete(`${process.env.REACT_APP_CONTACT_CRUD}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 
@@ -129,6 +129,7 @@ export const handleSubmitSendMail = e => {
 	e.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		const {
 			isSelectedMail,
 			mailSender: { subject, message },
@@ -162,7 +163,7 @@ export const handleSubmitSendMail = e => {
 				{
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				}
 			)

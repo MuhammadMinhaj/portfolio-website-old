@@ -13,7 +13,7 @@ import {
 	SUBS_EDIT_EMAIL_HANDLE_CHANGE,
 	SUBS_EDIT_EMAIL_SUCCESS,
 } from '../constants'
-
+// const Token = localStorage.getItem('token')
 export const handleClearMessage = () => {
 	return dispatch => {
 		dispatch({ type: CLEAR_MESSAGE })
@@ -23,6 +23,7 @@ export const handleClearMessage = () => {
 export const getDataFromServer = () => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		if (state.subscriptions.subscribers.length === 0) {
 			dispatch({
 				type: HANDLE_LOADER,
@@ -31,7 +32,7 @@ export const getDataFromServer = () => {
 				const res = await axios.get(process.env.REACT_APP_SUBS_GET_DATA, {
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				})
 				dispatch({
@@ -63,6 +64,7 @@ export const handleSubmitForm = event => {
 	event.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		const {
 			emailSender: { subject, message },
 		} = state.subscriptions
@@ -79,7 +81,7 @@ export const handleSubmitForm = event => {
 				{
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				}
 			)
@@ -99,6 +101,7 @@ export const handleSubmitForm = event => {
 export const handleDeleteMail = id => {
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		dispatch({
 			type: HANDLE_LOADER,
 		})
@@ -106,7 +109,7 @@ export const handleDeleteMail = id => {
 			const res = await axios.delete(`${process.env.REACT_APP_SUBS_DELETE_MAIL}/${id}`, {
 				headers: {
 					'x-api-key': process.env.REACT_APP_API_KEY,
-					'x-auth-token': state.app.accessToken,
+					'x-auth-token': Token,
 				},
 			})
 
@@ -118,6 +121,7 @@ export const handleDeleteMail = id => {
 		} catch (e) {
 			dispatch({
 				type: SUBS_ERROR_OCCURRED,
+				payload: e.message,
 			})
 		}
 	}
@@ -146,6 +150,7 @@ export const handleSubmitEditEmail = e => {
 	e.preventDefault()
 	return async (dispatch, selector) => {
 		const state = selector(state => state)
+		const Token = localStorage.getItem('token')
 		const {
 			editSubscriber: { email, _id },
 		} = state.subscriptions
@@ -159,7 +164,7 @@ export const handleSubmitEditEmail = e => {
 				{
 					headers: {
 						'x-api-key': process.env.REACT_APP_API_KEY,
-						'x-auth-token': state.app.accessToken,
+						'x-auth-token': Token,
 					},
 				}
 			)

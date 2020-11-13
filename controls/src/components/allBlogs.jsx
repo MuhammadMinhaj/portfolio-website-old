@@ -7,13 +7,7 @@ import {
 	AppBar,
 	Tabs,
 	Tab,
-	Card,
-	CardActionArea,
-	CardMedia,
-	CardContent,
-	CardActions,
 	Typography,
-	Button,
 	FormControl,
 	TextField,
 	Collapse,
@@ -21,6 +15,7 @@ import {
 	Select,
 	MenuItem,
 	InputLabel,
+	IconButton,
 } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
@@ -37,7 +32,8 @@ import {
 	alertHandleClose,
 	handleDeleteBlogsPost,
 } from '../redux/actions/blog'
-import { Loader, CustomModal, CustomAlert, ConfimDialog, CustomSelectionItem } from '../common'
+import { CustomModal, CustomAlert, ConfimDialog, CustomSelectionItem } from '../common'
+import CustomTable from '../common/table'
 import ReactEditor from '../common/react-editor'
 import styled from './style.module.css'
 
@@ -68,66 +64,6 @@ const CustomTab = () => {
 	)
 }
 
-const BlogItem = ({ post, handleClick }) => {
-	const state = useSelector(state => state.blog)
-	const dispatch = useDispatch()
-	const [open, setOpen] = useState(false)
-	const [error, setError] = useState('')
-	const [text, setText] = useState('')
-	const [thumbnail, setThumbnail] = useState('')
-	const handleToggle = () => {
-		setOpen(!open)
-	}
-	const handleChange = event => {
-		event.persist()
-		setText(event.target.value)
-	}
-	const handleConfirm = () => {
-		if (text === 'CONFIRM') {
-			dispatch(handleDeleteBlogsPost(post))
-		} else {
-			setError('Failed To Confirmation Latter')
-		}
-	}
-	useEffect(() => {
-		state.group.forEach(g => {
-			if (g._id.toString() === state.selectedTabGroupId.toString()) {
-				setThumbnail(g.thumbnail)
-			}
-		})
-	}, [state.group, state.selectedTabGroupId])
-	return (
-		<Grid item sm={4}>
-			<Card raised>
-				<ConfimDialog
-					isOpen={open}
-					contentText="Delete the post permanently,so you can't back the post after the deleted post.Please confirm us for delete post"
-					handleToggle={handleToggle}
-					handleChange={handleChange}
-					handleConfirm={handleConfirm}
-					error={error}
-					clearError={() => setError('')}
-				/>
-				<CardActionArea onClick={() => dispatch(handleClick(post))}>
-					<CardMedia component="img" alt="Contemplative Reptile" height="140" image={post.thumbnail || thumbnail} title="Contemplative Reptile" />
-					<CardContent>
-						<Typography gutterBottom variant="h5" component="h2">
-							{post.title}
-						</Typography>
-					</CardContent>
-				</CardActionArea>
-				<CardActions>
-					<Button startIcon={<EditIcon />} size="small" color="primary" variant="outlined" onClick={() => dispatch(handleClick(post))}>
-						Update
-					</Button>
-					<Button startIcon={<DeleteIcon />} size="small" color="secondary" variant="outlined" onClick={handleToggle}>
-						Delete
-					</Button>
-				</CardActions>
-			</Card>
-		</Grid>
-	)
-}
 
 const EditForm = () => {
 	const dispatch = useDispatch()
@@ -224,10 +160,67 @@ const EditForm = () => {
 const BlogsPost = () => {
 	const state = useSelector(state => state.blog)
 	const dispatch = useDispatch()
+	const [thumbnail, setThumbnail] = useState(null)
+
+	const [open, setOpen] = useState(false)
+	const [error, setError] = useState('')
+	const [text, setText] = useState('')
+	const [postId, setPostId] = useState('')
+
 	useEffect(() => {
 		dispatch(getBlogsHandle())
 		dispatch(getAllPostsRequest())
 	}, [dispatch])
+
+	useEffect(() => {
+		state.group.forEach(g => {
+			if (g._id.toString() === state.selectedTabGroupId.toString()) {
+				setThumbnail(g.thumbnail)
+			}
+		})
+	}, [state.group, state.selectedTabGroupId])
+	const handleFilter = () => {
+		let filtered = state.posts
+			.filter(post => post.group.toString() === state.selectedTabGroupId.toString())
+			.map(p => {
+				return {
+					_id: p._id,
+					title: p.title.length > 40 ? p.title.slice(0, 40) + '...' : p.title,
+					lang: p.lang,
+					readTime: p.readTime,
+					createdAt: p.createdAt.slice(0,16),
+					thumbnail: p.thumbnail || thumbnail,
+				}
+			})
+
+		return filtered
+	}
+	// Deletation Post
+
+	const handleToggle = id => {
+		setOpen(!open)
+		setPostId(id)
+	}
+	const handleChange = event => {
+		event.persist()
+		setText(event.target.value)
+	}
+	const handleConfirm = () => {
+		if (text === 'CONFIRM') {
+			setOpen(false)
+			dispatch(handleDeleteBlogsPost(postId))
+		} else {
+			setError('Failed To Confirmation Latter')
+		}
+	}
+
+	useEffect(() => {
+		state.group.forEach(g => {
+			if (g._id.toString() === state.selectedTabGroupId.toString()) {
+				setThumbnail(g.thumbnail)
+			}
+		})
+	}, [state.group, state.selectedTabGroupId])
 	return (
 		<Container>
 			{state.isLoading ? (
@@ -244,6 +237,7 @@ const BlogsPost = () => {
 				<br />
 			)}
 
+			{/* Update Modal */}
 			<CustomModal
 				open={state.isEditPostOpen}
 				title="Update Modal"
@@ -251,14 +245,39 @@ const BlogsPost = () => {
 				bodyComponent={() => <EditForm />}
 				handleSubmit={e => dispatch(handleUpdateBlogsPost(e))}
 			/>
+			{/* Delete Confirm Modal */}
+			<ConfimDialog
+				isOpen={open}
+				contentText="Delete the post permanently,so you can't back the post after the deleted post.Please confirm us for delete post"
+				handleToggle={handleToggle}
+				handleChange={handleChange}
+				handleConfirm={handleConfirm}
+				error={error}
+				clearError={() => setError('')}
+			/>
+
 			<Paper className={styled.padding} square={true} variant="outlined">
-				{state.isLoading && <Loader />}
-				<Grid container spacing={2}>
-					{!state.isLoading &&
-						state.posts
-							.filter(post => post.group.toString() === state.selectedTabGroupId.toString())
-							.map((post, ind) => <BlogItem post={post} key={ind} handleClick={selectedPostUpdateModal} />)}
-				</Grid>
+				<CustomTable
+					rows={handleFilter()}
+					headCells={[
+						{ id: 'title', numeric: false, disablePadding: false, label: 'Title' },
+						{ id: 'lang', numeric: false, disablePadding: false, label: 'Language' },
+						{ id: 'readTime', numeric: false, disablePadding: false, label: 'Read Time' },
+						{ id: 'createdAt', numeric: false, disablePadding: false, label: 'CreatedAt' },
+						{ id: 'thumbnail', numeric: false, disablePadding: false, label: 'Thumbnail' },
+					]}
+					control={item => (
+						<>
+							<IconButton color="primary" onClick={() => dispatch(selectedPostUpdateModal(item._id))}>
+								<EditIcon />
+							</IconButton>
+							<IconButton color="secondary" onClick={() => handleToggle(item._id)}>
+								<DeleteIcon />
+							</IconButton>
+						</>
+					)}
+					isLoading={state.isLoading}
+				/>
 			</Paper>
 		</Container>
 	)
