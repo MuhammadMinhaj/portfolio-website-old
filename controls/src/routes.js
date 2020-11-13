@@ -53,12 +53,20 @@ const routes = [
 ]
 
 const ProtectedRoute = props => {
-	return <Route path={props.path} render={data => (localStorage.getItem('token') ? <props.component {...data} /> : <Redirect to="/login" />)}></Route>
+	return (
+		<Route
+			path={props.path}
+			render={data => (localStorage.getItem('token') ? <props.component {...data} /> : <Redirect to="/login" />)}
+		></Route>
+	)
 }
 
 const UnProtectedRoute = props => {
 	return (
-		<Route path={props.path} render={data => (localStorage.getItem('token') ? <Redirect to="/dashboard" /> : <props.component {...data} />)}></Route>
+		<Route
+			path={props.path}
+			render={data => (localStorage.getItem('token') ? <Redirect to="/dashboard" /> : <props.component {...data} />)}
+		></Route>
 	)
 }
 
