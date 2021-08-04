@@ -4,8 +4,11 @@
 	"description": "Assalamu Alaikum. This is my personal protfolio website. It's make for using the mern stack.",
 	"main": "./server/server.js",
 	"scripts": {
-		"start": "node ./server/server.js",
-		"dev": "NODE_ENV='development' nodemon ./server/server.js"
+		"start": "node server.js",
+		"server": "NODE_ENV='development' nodemon server.js",
+		"client": "npm start --prefix client",
+		"admin": "npm start --prefix controls",
+		"dev": "concurrently \"npm run server\" \"npm run client\" \"npm run admin\""
 	},
 	"repository": {
 		"type": "git",
@@ -30,6 +33,7 @@
 		"reading-time": "^1.2.0"
 	},
 	"devDependencies": {
+		"concurrently": "^5.3.0",
 		"morgan": "^1.10.0",
 		"nodemon": "^2.0.4"
 	}

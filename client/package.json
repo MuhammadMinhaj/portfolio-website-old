@@ -19,10 +19,7 @@
 		"react-redux": "^7.2.1",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "3.4.3",
-		"react-top-loading-bar": "^2.0.1",
 		"redux": "^4.0.5",
-		"redux-devtools-extension": "^2.13.8",
-		"redux-logger": "^3.0.6",
 		"redux-thunk": "^2.3.0",
 		"scrolling-based-progressbar": "^1.21.0",
 		"timeago.js": "^4.0.2"
@@ -48,5 +45,9 @@
 			"last 1 safari version"
 		]
 	},
-	"proxy": "http://localhost:8080/"
+	"proxy": "http://localhost:8080/",
+	"devDependencies": {
+		"redux-devtools-extension": "^2.13.8",
+		"redux-logger": "^3.0.6"
+	}
 }
